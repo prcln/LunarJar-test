@@ -1,0 +1,222 @@
+.wishes-container {
+			margin-top: 3rem;
+			padding: 2rem;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			border-radius: 20px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+	}
+
+.wishes-title {
+		color: white;
+		font-size: 1.5rem;
+		font-weight: 600;
+		margin-bottom: 1.5rem;
+		text-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+}
+
+.wishes-stats {
+		display: flex;
+		justify-content: center;
+		gap: 2rem;
+		margin-bottom: 2rem;
+		flex-wrap: wrap;
+}
+
+.stat-item {
+		background: rgba(255, 255, 255, 0.2);
+		padding: 0.75rem 1.25rem;
+		border-radius: 12px;
+		color: white;
+		font-weight: 500;
+		backdrop-filter: blur(10px);
+		border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.accordion-container {
+		max-height: 500px;
+		overflow-y: auto;
+		padding-right: 0.5rem;
+}
+
+.accordion-container::-webkit-scrollbar {
+		width: 6px;
+}
+
+.accordion-container::-webkit-scrollbar-track {
+		background: rgba(255, 255, 255, 0.1);
+		border-radius: 3px;
+}
+
+.accordion-container::-webkit-scrollbar-thumb {
+		background: rgba(255, 255, 255, 0.3);
+		border-radius: 3px;
+}
+
+.accordion-item {
+		background: rgba(255, 255, 255, 0.15);
+		border-radius: 12px;
+		margin-bottom: 1rem;
+		backdrop-filter: blur(10px);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		overflow: hidden;
+		transition: all 0.3s ease;
+}
+
+.accordion-item:hover {
+		background: rgba(255, 255, 255, 0.2);
+		transform: translateY(-2px);
+		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.accordion-header {
+		padding: 1rem 1.5rem;
+		cursor: pointer;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		color: white;
+		font-weight: 500;
+		user-select: none;
+		transition: all 0.2s ease;
+}
+
+.accordion-header:hover {
+		background: rgba(255, 255, 255, 0.1);
+}
+
+.accordion-header.active {
+		background: rgba(255, 255, 255, 0.15);
+}
+
+.accordion-title {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		flex: 1;
+}
+
+.category-badge {
+		background: rgba(255, 255, 255, 0.25);
+		padding: 0.25rem 0.75rem;
+		border-radius: 20px;
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+}
+
+.accordion-icon {
+		width: 20px;
+		height: 20px;
+		transition: transform 0.3s ease;
+}
+
+.accordion-icon.expanded {
+		transform: rotate(180deg);
+}
+
+.accordion-content {
+		max-height: 0;
+		overflow: hidden;
+		transition: max-height 0.3s ease, padding 0.3s ease;
+		background: rgba(255, 255, 255, 0.1);
+}
+
+.accordion-content.expanded {
+		max-height: 300px;
+		padding: 1.5rem;
+}
+
+.wish-content {
+		color: white;
+		line-height: 1.6;
+		margin-bottom: 1rem;
+		font-size: 0.95rem;
+}
+
+.wish-meta {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		color: rgba(255, 255, 255, 0.8);
+		font-size: 0.8rem;
+		border-top: 1px solid rgba(255, 255, 255, 0.2);
+		padding-top: 1rem;
+}
+
+.wish-author {
+		font-weight: 500;
+}
+
+.wish-date {
+		font-style: italic;
+}
+
+.loading-wishes {
+		text-align: center;
+		color: rgba(255, 255, 255, 0.8);
+		padding: 2rem;
+		font-style: italic;
+}
+
+.no-wishes {
+		text-align: center;
+		color: rgba(255, 255, 255, 0.8);
+		padding: 2rem;
+		font-style: italic;
+}
+
+.load-more-btn {
+		width: 100%;
+		padding: 1rem;
+		background: rgba(255, 255, 255, 0.2);
+		color: white;
+		border: 1px solid rgba(255, 255, 255, 0.3);
+		border-radius: 12px;
+		cursor: pointer;
+		font-weight: 500;
+		transition: all 0.3s ease;
+		margin-top: 1rem;
+		backdrop-filter: blur(10px);
+}
+
+.load-more-btn:hover {
+		background: rgba(255, 255, 255, 0.3);
+		transform: translateY(-2px);
+}
+
+/* Category color coding */
+.category-personal { background: rgba(255, 107, 107, 0.8); }
+.category-career { background: rgba(84, 160, 255, 0.8); }
+.category-relationships { background: rgba(255, 159, 67, 0.8); }
+.category-health { background: rgba(46, 213, 115, 0.8); }
+.category-dreams { background: rgba(123, 104, 238, 0.8); }
+.category-other { background: rgba(165, 177, 194, 0.8); }
+
+@media (max-width: 768px) {
+		.wishes-container {
+				margin-top: 2rem;
+				padding: 1.5rem;
+		}
+
+		.wishes-stats {
+				gap: 1rem;
+		}
+
+		.stat-item {
+				padding: 0.5rem 1rem;
+				font-size: 0.9rem;
+		}
+
+		.accordion-header {
+				padding: 1rem;
+		}
+
+		.accordion-content.expanded {
+				padding: 1rem;
+		}
+}
