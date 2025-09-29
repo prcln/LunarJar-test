@@ -11,6 +11,7 @@ import FormRender from '../pages/form+render.jsx';
 import AuthComponent from '../components/auth-form/auth-form.jsx';
 import ProtectedRoute from '../components/ProtectedRoute.jsx';
 import Navbar from '../components/navbar/Navbar.jsx';
+import ShareTree from '../components/share-tree/share-tree.jsx';
 
 //       <Route path="/" element={<>      <WishForm/> <WishRender/> </>} />
 
@@ -66,6 +67,15 @@ function App() {
           element={
             <ProtectedRoute>
               <WishRender />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/share" 
+          element={
+            <ProtectedRoute>
+              <ShareTree />
             </ProtectedRoute>
           } 
         />

@@ -70,6 +70,7 @@ export default function WishForm({ onSubmitSuccess }) {
       wish: wishData.wish,
       category: wishData.category,
       isAnonymous: wishData.isAnonymous,
+      userId: auth.currentUser?.uid,
       timestamp: new Date(),
       createdAt: new Date().toISOString()
     };
