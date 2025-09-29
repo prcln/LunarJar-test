@@ -2,15 +2,17 @@ import { db } from '../../firebase.js';
 import { collection, addDoc, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
 
 import { useState, useEffect } from 'react';
+import { auth } from '../../firebase.js';
 
 import './wish-form.css'
 
-export default function WishForm({ onSubmitSuccess }) {
+export default function WishForm({currentTreeId, onSubmitSuccess}) {
   const [wishData, setWishData] = useState({
     name: '',
     wish: '',
     category: 'personal',
-    isAnonymous: false
+    isAnonymous: false,
+    treeId: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -71,6 +73,7 @@ export default function WishForm({ onSubmitSuccess }) {
       category: wishData.category,
       isAnonymous: wishData.isAnonymous,
       userId: auth.currentUser?.uid,
+      treeId: currentTreeId,
       timestamp: new Date(),
       createdAt: new Date().toISOString()
     };

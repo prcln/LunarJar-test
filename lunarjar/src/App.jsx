@@ -12,6 +12,8 @@ import AuthComponent from '../components/auth-form/auth-form.jsx';
 import ProtectedRoute from '../components/ProtectedRoute.jsx';
 import Navbar from '../components/navbar/Navbar.jsx';
 import ShareTree from '../components/share-tree/share-tree.jsx';
+import CreateTree from '../components/create-tree/create-tree.jsx';
+import TreeList from '../components/tree-list/tree-list.jsx';
 
 //       <Route path="/" element={<>      <WishForm/> <WishRender/> </>} />
 
@@ -48,7 +50,7 @@ function App() {
           path="/" 
           element={
             <ProtectedRoute>
-              <FormRender />
+              <FormRender isGlobalRender={true} />
             </ProtectedRoute>
           } 
         />
@@ -58,6 +60,15 @@ function App() {
           element={
             <ProtectedRoute>
               <WishForm />
+            </ProtectedRoute>
+          } 
+        />
+
+          <Route 
+          path="/create" 
+          element={
+            <ProtectedRoute>
+              <CreateTree />
             </ProtectedRoute>
           } 
         />
@@ -81,10 +92,10 @@ function App() {
         />
         
         <Route 
-          path="/tree/:userId" 
+          path="/user/tree/:tree" 
           element={
             <ProtectedRoute>
-              <WishForm />
+              <FormRender isGlobalRender={false} />
             </ProtectedRoute>
           } 
         />
@@ -102,7 +113,16 @@ function App() {
           path="/me/tree" 
           element={
             <ProtectedRoute>
-              <WishForm />
+              <TreeList userId={user?.uid} />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/me/tree/:treeId" 
+          element={
+            <ProtectedRoute>
+              <FormRender isGlobalRender={false} userId={user?.uid} />
             </ProtectedRoute>
           } 
         />

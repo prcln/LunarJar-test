@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react';
 
 import './wish-render.css';
 
-export default function WishRender({ refreshTrigger = 0 }) {
+export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlobalRender=false }) {
   console.log('🎯 WishRender received refreshTrigger:', refreshTrigger);
 
   const [wishes, setWishes] = useState([]);
   const [displayedWishes, setDisplayedWishes] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [currentLimit, setCurrentLimit] = useState(10);
   const [stats, setStats] = useState({ total: 0, today: 0 });
@@ -36,17 +36,24 @@ export default function WishRender({ refreshTrigger = 0 }) {
 
   // Load wishes from Firebase
   const loadWishes = async () => {
-    setIsLoading(true);
+    setLoading(true);
     
     try {
       console.log('Loading wishes from Firebase...');
-      
+
       // Query wishes from Firebase
-      const q = query(
-        collection(db, "wishes"), 
-        orderBy("timestamp", "desc"), 
-        limit(currentLimit)
-      );
+      const q = isGlobalRender
+      ? query(
+          collection(db, "wishes"),
+          orderBy("timestamp", "desc"),
+          limit(currentLimit)
+        )
+      : query(
+          collection(db, "wishes"),
+          where("treeId", "==", currentTreeId),
+          orderBy("timestamp", "desc"),
+          limit(currentLimit)
+        );
       const querySnapshot = await getDocs(q);
       
       const loadedWishes = [];
@@ -67,7 +74,7 @@ export default function WishRender({ refreshTrigger = 0 }) {
     } catch (error) {
       console.error('❌ Error loading wishes:', error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -183,7 +190,7 @@ export default function WishRender({ refreshTrigger = 0 }) {
       </div>
 
       <div className="accordion-container">
-        {isLoading ? (
+        {loading ? (
           <div className="loading-wishes">
             Loading wishes from the tree... 🌟
           </div>
