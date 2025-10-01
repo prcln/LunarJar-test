@@ -1,5 +1,5 @@
 import { db } from '../../firebase.js';
-import { collection, addDoc, getDocs, query, where, orderBy, limit, doc, deleteDoc, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+import { collection, addDoc, getDoc, getDocs, query, where, orderBy, limit, doc, deleteDoc, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
 import { useState, useEffect } from 'react';
 import { canDeleteWish, getUserTreeRole } from '../../utils/checkPerm.js';
 
@@ -88,14 +88,20 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
     try {
       // Delete the wish document
       await deleteDoc(doc(db, 'wishes', wishId));
-      
+      console.log(treeId);
       // Decrement the wishCount in the tree document
       if (treeId) {
         const treeRef = doc(db, 'trees', treeId);
-        if (treeRef.wishCount > 0) {
-        await updateDoc(treeRef, {
-          wishCount: increment(-1)
-        });
+        const treeDoc = await getDoc(treeRef);
+        if (treeDoc.exists()) {
+            const treeData = treeDoc.data();
+            
+            if (treeData.wishCount > 0) {
+              await updateDoc(treeRef, {
+                wishCount: increment(-1)
+              });
+            }
+        console.log('wish decremented');
         }
       }
 
