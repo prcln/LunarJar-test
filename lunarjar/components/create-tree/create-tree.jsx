@@ -4,6 +4,7 @@ import { collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/fir
 import { auth, db } from '../../firebase.js';
 
 import './create-tree.css'
+import { createUniqueSlug } from '../../utils/slug.js';
 
 export default function CreateTree() {
 const [user, setUser] = useState(null);
@@ -46,11 +47,12 @@ const handleSubmit = async (e) => {
 
     const treeData = {
       name: treeName.trim(),
+      slug: createUniqueSlug(treeName.trim()),
       ownerId: user.uid,
       isPublic: isPublic,
       collaborators: collaboratorsList,
       createdAt: serverTimestamp(),
-      timestamp: new Date()
+      wishCount: 0
     };
 
     const docRef = await addDoc(collection(db, 'trees'), treeData);
@@ -64,7 +66,7 @@ const handleSubmit = async (e) => {
     
     // Redirect after 2 seconds
     setTimeout(() => {
-      window.location.href = `/user/tree/${docRef.id}`;
+      window.location.href = `/me/tree/${docRef.slug}`;
     }, 2000);
 
   } catch (error) {

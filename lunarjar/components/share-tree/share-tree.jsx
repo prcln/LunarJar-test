@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+
 import { auth } from '../../firebase.js';
 
 import './share-tree.css'
 
-export default function ShareTree() {
+export default function ShareTree({ currentTreeId, slug }) {
   const [user, setUser] = useState(null);
   const [copied, setCopied] = useState(false);
   const [qrCode, setQrCode] = useState('');
@@ -19,11 +20,11 @@ export default function ShareTree() {
 
     return () => unsubscribe();
   }, []);
-
+  
   const getTreeUrl = () => {
     if (!user) return '';
     const baseUrl = window.location.origin;
-    return `${baseUrl}/tree/${user.uid}`;
+    return `${baseUrl}/tree/${slug}`;
   };
 
   const generateQRCode = (userId) => {
@@ -77,7 +78,7 @@ export default function ShareTree() {
 return (
     <div className="share-container">
       <div className="share-card">
-        <h2 className="share-title">Share Your Wish Tree</h2>
+        <h2 className="share-title">Share Your Tree!</h2>
 
         {/* Share Link */}
         <div className="share-section">

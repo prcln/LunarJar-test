@@ -33,7 +33,7 @@ const TreeList = ({ userId }) => {
     
     setDisplayedTrees(filtered);
   }, [searchTerm, trees]);
-
+  // Debug
   console.log(userId);
 
   const fetchUserTrees = async () => {
@@ -45,7 +45,7 @@ const TreeList = ({ userId }) => {
       const q = query(
         collection(db, 'trees'), 
         where('ownerId', '==', userId),
-        orderBy("timestamp", "desc"));
+        orderBy("createdAt", "desc"));
 
       const querySnapshot = await getDocs(q);
       
@@ -75,9 +75,9 @@ const TreeList = ({ userId }) => {
     setExpandedIndex(expandedIndex === index ? null : index);
   };
 
-  const handleTreeClick = (treeId) => {
-    console.log('Selected tree:', treeId);
-    navigate('/me/tree/${treeId}');
+  const handleTreeClick = (tree) => {
+    console.log('Selected tree:', tree);
+    navigate(`/me/tree/${tree}`);
   };
 
   const handleCreateTree = () => {
@@ -85,6 +85,7 @@ const TreeList = ({ userId }) => {
     // Navigate to create tree page
     navigate('/create');
   };
+
 
   const formatDate = (timestamp) => {
     if (!timestamp) return 'Unknown date';
@@ -214,7 +215,7 @@ const TreeList = ({ userId }) => {
                     <div className="wish-meta">
                       <span className="wish-date">Created {formatDate(tree.createdAt)}</span>
                       <button
-                        onClick={() => handleTreeClick(tree.id)}
+                        onClick={() => handleTreeClick(tree.slug)}
                         style={{
                           padding: '6px 12px',
                           borderRadius: '4px',

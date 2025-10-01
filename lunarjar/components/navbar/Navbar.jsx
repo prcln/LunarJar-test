@@ -43,10 +43,10 @@ export default function Navbar() {
           <Link to="/" className={`nav-link ${isActive('/')}`}>
             Home
           </Link>
-          <Link to="/form" className={`nav-link ${isActive('/form')}`}>
+          <Link to="/" className={`nav-link ${isActive('/form')}`}>
             Make a Wish
           </Link>
-          <Link to="/render" className={`nav-link ${isActive('/render')}`}>
+          <Link to="/" className={`nav-link ${isActive('/render')}`}>
             View Wishes
           </Link>
           <Link to="/me/tree" className={`nav-link ${isActive('/me/tree')}`}>

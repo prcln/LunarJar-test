@@ -1,65 +1,72 @@
 .share-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
   padding: 20px;
 }
 
 .share-card {
   background: white;
-  border-radius: 20px;
-  padding: 30px;
-  max-width: 550px;
-  width: 100%;
-  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .share-title {
-  font-size: 1.75rem;
-  font-weight: bold;
+  font-size: 1.5rem;
+  font-weight: 600;
   color: #333;
   margin-bottom: 20px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .share-section {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .link-container {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
 .link-input {
   flex: 1;
-  padding: 12px;
-  border: 2px solid #e1e5e9;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 14px;
   background: #f8f9fa;
+  color: #333;
+}
+
+.link-input:focus {
+  outline: none;
+  border-color: #667eea;
 }
 
 .copy-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 16px;
+  padding: 10px 14px;
   background: #667eea;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-weight: 500;
   transition: all 0.2s ease;
-  min-width: 45px;
+  min-width: 42px;
 }
 
 .copy-btn:hover {
   background: #5568d3;
   transform: translateY(-1px);
+}
+
+.copy-btn:active {
+  transform: translateY(0);
 }
 
 .compact-section {
@@ -69,31 +76,31 @@
 .qr-social-container {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  background: rgba(102, 126, 234, 0.08);
-  padding: 1rem;
-  border-radius: 12px;
-  border: 1px solid rgba(102, 126, 234, 0.15);
+  gap: 16px;
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
 }
 
 .qr-compact {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .qr-image-small {
-  width: 100px;
-  height: 100px;
-  border-radius: 8px;
-  border: 2px solid rgba(102, 126, 234, 0.2);
-  padding: 5px;
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+  border: 2px solid #e5e7eb;
+  padding: 4px;
   background: white;
 }
 
 .download-btn-compact {
-  padding: 0.4rem 0.7rem;
+  padding: 6px 10px;
   background: #667eea;
   color: white;
   border: none;
@@ -103,7 +110,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
 }
 
 .download-btn-compact:hover {
@@ -111,48 +118,37 @@
   transform: translateY(-1px);
 }
 
+.download-btn-compact:active {
+  transform: translateY(0);
+}
+
 .social-grid-compact {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0.6rem;
+  display: flex;
+  gap: 10px;
   flex: 1;
+  flex-wrap: wrap;
 }
 
 .social-btn-compact {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   padding: 0;
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-}
-
-.social-btn-compact::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  transition: all 0.25s ease;
-  opacity: 0;
-}
-
-.social-btn-compact:hover::before {
-  opacity: 1;
 }
 
 .social-btn-compact:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.social-btn-compact svg {
-  position: relative;
-  z-index: 1;
+.social-btn-compact:active {
+  transform: translateY(0);
 }
 
 .social-btn-compact.twitter {
@@ -201,28 +197,27 @@
 }
 
 @media (max-width: 768px) {
+  .share-container {
+    padding: 16px;
+  }
+
   .share-card {
     padding: 20px;
   }
 
   .share-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
 
   .qr-social-container {
     flex-direction: column;
-    gap: 1rem;
+    gap: 12px;
+    padding: 12px;
   }
   
   .social-grid-compact {
-    grid-template-columns: repeat(5, 1fr);
     width: 100%;
-    justify-items: center;
-  }
-
-  .social-btn-compact {
-    width: 40px;
-    height: 40px;
+    justify-content: center;
   }
 }
 
@@ -236,7 +231,11 @@
   }
 
   .social-grid-compact {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
+    gap: 8px;
+  }
+
+  .social-btn-compact {
+    width: 36px;
+    height: 36px;
   }
 }

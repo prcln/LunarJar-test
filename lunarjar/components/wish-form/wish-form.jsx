@@ -1,5 +1,5 @@
 import { db } from '../../firebase.js';
-import { collection, addDoc, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+import { collection, doc, increment, addDoc, updateDoc, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
 
 import { useState, useEffect } from 'react';
 import { auth } from '../../firebase.js';
@@ -86,6 +86,11 @@ export default function WishForm({currentTreeId, onSubmitSuccess}) {
       
       console.log('✅ Wish saved successfully with ID:', docRef.id);
       showMessage('Your wish has been added to the tree! ✨', 'success');
+
+      const treeRef = doc(db, 'trees', currentTreeId);
+      await updateDoc(treeRef, {
+      wishCount: increment(1)
+      });
       resetForm();
 
       // Add this console.log

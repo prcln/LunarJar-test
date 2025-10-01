@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useParams } from "react-router-dom";
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
 import { auth } from '../firebase.js';
 
@@ -7,19 +7,22 @@ import { auth } from '../firebase.js';
 // default export no {}
 import WishForm from "../components/wish-form/wish-form.jsx"
 import WishRender from "../components/wish-render/wish-render.jsx";
-import FormRender from '../pages/form+render.jsx';
+import UserTree from '../pages/UserTree/UserTree.jsx';
 import AuthComponent from '../components/auth-form/auth-form.jsx';
 import ProtectedRoute from '../components/ProtectedRoute.jsx';
 import Navbar from '../components/navbar/Navbar.jsx';
 import ShareTree from '../components/share-tree/share-tree.jsx';
 import CreateTree from '../components/create-tree/create-tree.jsx';
 import TreeList from '../components/tree-list/tree-list.jsx';
+import { User } from 'lucide-react';
 
 //       <Route path="/" element={<>      <WishForm/> <WishRender/> </>} />
 
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { tree: treeId } = useParams();
+  
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -50,7 +53,7 @@ function App() {
           path="/" 
           element={
             <ProtectedRoute>
-              <FormRender isGlobalRender={true} />
+              <UserTree key="public" isGlobalRender={true} />
             </ProtectedRoute>
           } 
         />
@@ -95,7 +98,7 @@ function App() {
           path="/user/tree/:tree" 
           element={
             <ProtectedRoute>
-              <FormRender isGlobalRender={false} />
+              <UserTree isGlobalRender={false} />
             </ProtectedRoute>
           } 
         />
@@ -113,16 +116,33 @@ function App() {
           path="/me/tree" 
           element={
             <ProtectedRoute>
-              <TreeList userId={user?.uid} />
+              <TreeList 
+                
+                userId={user?.uid} />
             </ProtectedRoute>
           } 
         />
 
         <Route 
-          path="/me/tree/:treeId" 
+          path="/me/tree/:slug" 
           element={
             <ProtectedRoute>
-              <FormRender isGlobalRender={false} userId={user?.uid} />
+              <UserTree
+              key="personalMe" 
+              isGlobalRender={false} 
+              userId={user?.uid} />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/tree/:slug" 
+          element={
+            <ProtectedRoute>
+              <UserTree
+              key="personalOther" 
+              isGlobalRender={false} 
+              userId={user?.uid} />
             </ProtectedRoute>
           } 
         />
