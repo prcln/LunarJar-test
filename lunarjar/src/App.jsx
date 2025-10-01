@@ -14,7 +14,8 @@ import Navbar from '../components/navbar/Navbar.jsx';
 import ShareTree from '../components/share-tree/share-tree.jsx';
 import CreateTree from '../components/create-tree/create-tree.jsx';
 import TreeList from '../components/tree-list/tree-list.jsx';
-import { User } from 'lucide-react';
+
+import PublicTree from '../pages/PublicTree/PublicTree.jsx'
 
 //       <Route path="/" element={<>      <WishForm/> <WishRender/> </>} />
 
@@ -53,20 +54,13 @@ function App() {
           path="/" 
           element={
             <ProtectedRoute>
-              <UserTree key="public" isGlobalRender={true} />
+              <PublicTree 
+              key="public" 
+              isGlobalRender={true} />
             </ProtectedRoute>
           } 
         />
         
-        <Route 
-          path="/form" 
-          element={
-            <ProtectedRoute>
-              <WishForm />
-            </ProtectedRoute>
-          } 
-        />
-
           <Route 
           path="/create" 
           element={
@@ -77,37 +71,39 @@ function App() {
         />
         
         <Route 
-          path="/render" 
+          path="/user/tree/:tree" 
           element={
             <ProtectedRoute>
-              <WishRender />
+              <UserTree 
+              isGlobalRender={false}
+              userMail={user?.email}
+              />
+            </ProtectedRoute>
+          } 
+        />
+        
+        <Route 
+          path="/public/trees" 
+          element={
+            <ProtectedRoute>
+              <TreeList
+              key="publictree" 
+              isPublic={true}
+              userId={user?.uid}
+              />
             </ProtectedRoute>
           } 
         />
 
         <Route 
-          path="/share" 
+          path="/community/tree" 
           element={
             <ProtectedRoute>
-              <ShareTree />
-            </ProtectedRoute>
-          } 
-        />
-        
-        <Route 
-          path="/user/tree/:tree" 
-          element={
-            <ProtectedRoute>
-              <UserTree isGlobalRender={false} />
-            </ProtectedRoute>
-          } 
-        />
-        
-        <Route 
-          path="/tree/:userId/wish/:wishId" 
-          element={
-            <ProtectedRoute>
-              <WishForm />
+              <PublicTree
+              key="communitytree" 
+              isPublic={true}
+              userId={user?.uid}
+              />
             </ProtectedRoute>
           } 
         />
@@ -117,8 +113,9 @@ function App() {
           element={
             <ProtectedRoute>
               <TreeList 
-                
-                userId={user?.uid} />
+                key="mytree"
+                userId={user?.uid}
+                />
             </ProtectedRoute>
           } 
         />
@@ -130,7 +127,9 @@ function App() {
               <UserTree
               key="personalMe" 
               isGlobalRender={false} 
-              userId={user?.uid} />
+              userId={user?.uid}
+              userMail={user?.email}
+              />
             </ProtectedRoute>
           } 
         />

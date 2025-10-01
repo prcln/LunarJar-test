@@ -1,12 +1,12 @@
 import { db } from '../../firebase.js';
 import { collection, addDoc, getDocs, query, where, orderBy, limit, doc, deleteDoc, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
 import { useState, useEffect } from 'react';
-import { isUserAdmin } from '../../utils/checkAdmin.js';
+import { canDeleteWish, getUserTreeRole } from '../../utils/checkPerm.js';
 
 import './wish-render.css';
 
-export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlobalRender=false, treeName, currentUserId }) {
-  console.log('🎯 WishRender received:', { currentTreeId, refreshTrigger, isGlobalRender, currentUserId });
+export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlobalRender=false, treeName, currentUserId, currentUserMail }) {
+  console.log('🎯 WishRender received:', { currentTreeId, refreshTrigger, isGlobalRender, currentUserId, currentUserMail });
 
   const [wishes, setWishes] = useState([]);
   const [displayedWishes, setDisplayedWishes] = useState([]);
@@ -16,8 +16,9 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
   const [stats, setStats] = useState({ total: 0, today: 0 });
   const [filterCategory, setFilterCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [userRole, setUserRole] = useState(null);
   const [deletingWishId, setDeletingWishId] = useState(null);
+  const [wishPermissions, setWishPermissions] = useState({});
 
   const categoryColors = {
     'personal': 'category-personal',
@@ -37,26 +38,45 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
     'other': 'Other'
   };
 
-  // Check admin status
+  // Check user's role on this tree
   useEffect(() => {
-    const checkAdmin = async () => {
-      if (currentUserId) {
-        console.log('🔍 Checking admin status for:', currentUserId);
-        const adminStatus = await isUserAdmin(currentUserId);
-        setIsAdmin(adminStatus);
-        console.log('👤 Admin status result:', adminStatus);
+    const checkRole = async () => {
+      if (currentUserId && currentTreeId) {
+        const role = await getUserTreeRole(currentUserId, currentTreeId, currentUserMail);
+        setUserRole(role);
+        console.log('👤 User role on this tree:', role);
       } else {
-        console.log('⚠️ No currentUserId provided');
-        setIsAdmin(false);
+        setUserRole(null);
       }
     };
-    checkAdmin();
-  }, [currentUserId]);
+    checkRole();
+  }, [currentUserId, currentTreeId]);
+
+  // Check permissions for each wish when wishes load
+  useEffect(() => {
+    const checkWishPermissions = async () => {
+      if (!currentUserId || wishes.length === 0) return;
+
+      const permissions = {};
+      
+      for (const wish of wishes) {
+        const canDelete = await canDeleteWish(currentUserId, wish.id, wish.treeId);
+        permissions[wish.id] = { canDelete };
+      }
+      
+      setWishPermissions(permissions);
+      console.log('🔐 Wish permissions calculated:', permissions);
+    };
+
+    checkWishPermissions();
+  }, [wishes, currentUserId]);
 
   // Delete wish function
   const handleDeleteWish = async (wishId, treeId) => {
-    if (!isAdmin) {
-      alert('You do not have permission to delete wishes.');
+    const hasPermission = wishPermissions[wishId]?.canDelete;
+    
+    if (!hasPermission) {
+      alert('You do not have permission to delete this wish.');
       return;
     }
 
@@ -72,9 +92,11 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
       // Decrement the wishCount in the tree document
       if (treeId) {
         const treeRef = doc(db, 'trees', treeId);
+        if (treeRef.wishCount > 0) {
         await updateDoc(treeRef, {
           wishCount: increment(-1)
         });
+        }
       }
 
       console.log('✅ Wish deleted successfully');
@@ -102,18 +124,15 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
       console.log('📥 Loading wishes from Firebase...');
       console.log('Context:', { isGlobalRender, currentTreeId, currentLimit });
 
-      // Query wishes from Firebase
       let q;
       
       if (isGlobalRender) {
-        // Global render: get all wishes, ordered by createdAt
         q = query(
           collection(db, "wishes"),
           orderBy("createdAt", "desc"),
           limit(currentLimit)
         );
       } else {
-        // Tree-specific render
         if (!currentTreeId) {
           console.log('⚠️ No currentTreeId provided, skipping load');
           setLoading(false);
@@ -142,7 +161,6 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
       setWishes(loadedWishes);
       setDisplayedWishes(loadedWishes);
       
-      // Update stats
       await updateStats();
       
     } catch (error) {
@@ -160,11 +178,9 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
       let todayCount = 0;
 
       if (isGlobalRender) {
-        // Get all wishes for global render
         const allWishesSnapshot = await getDocs(collection(db, "wishes"));
         totalCount = allWishesSnapshot.size;
 
-        // Get today's count
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const todayISO = today.toISOString();
@@ -176,7 +192,6 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
         const todaySnapshot = await getDocs(todayQuery);
         todayCount = todaySnapshot.size;
       } else {
-        // Get tree-specific counts
         if (currentTreeId) {
           const treeWishesQuery = query(
             collection(db, "wishes"),
@@ -185,7 +200,6 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
           const treeWishesSnapshot = await getDocs(treeWishesQuery);
           totalCount = treeWishesSnapshot.size;
 
-          // Get today's count for this tree
           const today = new Date();
           today.setHours(0, 0, 0, 0);
           const todayISO = today.toISOString();
@@ -201,7 +215,6 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
       }
 
       setStats({ total: totalCount, today: todayCount });
-      
       console.log('📊 Stats updated:', { total: totalCount, today: todayCount });
       
     } catch (error) {
@@ -209,13 +222,11 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
     }
   };
 
-  // Load wishes on mount and when refreshTrigger, currentLimit, or currentTreeId changes
   useEffect(() => {
     console.log('🔄 useEffect triggered:', { refreshTrigger, currentLimit, currentTreeId });
     loadWishes();
   }, [refreshTrigger, currentLimit, currentTreeId, isGlobalRender]);
 
-  // Filter wishes by category and search term
   useEffect(() => {
     let filtered = wishes;
     
@@ -233,20 +244,37 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
     setDisplayedWishes(filtered);
   }, [filterCategory, searchTerm, wishes]);
 
-  // Toggle accordion
   const toggleAccordion = (index) => {
     setExpandedIndex(expandedIndex === index ? null : index);
   };
 
-  // Load more wishes
   const loadMore = () => {
     setCurrentLimit(prev => prev + 10);
   };
 
-  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return 'Unknown date';
     return new Date(dateString).toLocaleDateString();
+  };
+
+  // Role badge display
+  const getRoleBadge = () => {
+    if (!userRole) return null;
+    
+    const badges = {
+      'admin': { text: '👑 Admin', color: '#d97706' },
+      'owner': { text: '🌳 Owner', color: '#059669' },
+      'collaborator': { text: '🤝 Collaborator', color: '#3b82f6' }
+    };
+    
+    const badge = badges[userRole];
+    if (!badge) return null;
+    
+    return (
+      <div className="stat-item" style={{ color: badge.color }}>
+        {badge.text}
+      </div>
+    );
   };
 
   return (
@@ -265,14 +293,9 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
         <div className="stat-item">
           <strong id="todayWishes">{stats.today}</strong> Today
         </div>
-        {isAdmin && (
-          <div className="stat-item" style={{ color: '#d97706' }}>
-            👑 Admin Mode
-          </div>
-        )}
+        {getRoleBadge()}
       </div>
 
-      {/* Filter Controls */}
       <div className="filter-controls" style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
         <select 
           value={filterCategory}
@@ -315,6 +338,7 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
               const categoryClass = categoryColors[wish.category] || 'category-other';
               const categoryName = categoryNames[wish.category] || wish.category;
               const isExpanded = expandedIndex === index;
+              const canDelete = wishPermissions[wish.id]?.canDelete || false;
 
               return (
                 <div key={wish.id} className="accordion-item">
@@ -329,7 +353,7 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
                       <span>By {wish.name || 'Anonymous'}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      {isAdmin && (
+                      {canDelete && (
                         <button
                           className="delete-wish-btn"
                           onClick={(e) => {
@@ -343,7 +367,7 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
                             color: 'white',
                             border: 'none',
                             borderRadius: '4px',
-                            cursor: 'pointer',
+                            cursor: deletingWishId === wish.id ? 'not-allowed' : 'pointer',
                             fontSize: '12px',
                             opacity: deletingWishId === wish.id ? 0.5 : 1
                           }}

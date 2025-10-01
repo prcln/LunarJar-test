@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import '../wish-render/wish-render.css';
 
-const TreeList = ({ userId }) => {
+const TreeList = ({ userId, isPublic=false }) => {
   const navigate = useNavigate();
   const [trees, setTrees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,11 +41,22 @@ const TreeList = ({ userId }) => {
     setError(null);
     try {
       console.log('Loading trees from Firebase...');
+
+      let q;
       
-      const q = query(
-        collection(db, 'trees'), 
-        where('ownerId', '==', userId),
-        orderBy("createdAt", "desc"));
+      if (isPublic) {
+        q = query(
+          collection(db, 'trees'),
+          where('isPublic', '==', true),
+          orderBy("createdAt", "desc")
+        );
+      } else {
+        q = query(
+          collection(db, 'trees'), 
+          where('ownerId', '==', userId),
+          orderBy("createdAt", "desc")
+        );
+      }
 
       const querySnapshot = await getDocs(q);
       

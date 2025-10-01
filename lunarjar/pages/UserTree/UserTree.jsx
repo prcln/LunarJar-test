@@ -9,7 +9,7 @@ import ShareTree from '../../components/share-tree/share-tree.jsx';
 import './UserTree.css'; // Add the CSS file
 import { fetchTreeBySlug } from '../../utils/fetchTreeBySlug.js';
 
-function UserTree({ isGlobalRender = false, userId }) {
+function UserTree({ isGlobalRender = false, userId, userMail }) {
   const { slug } = useParams();
   const [treeId, setTreeId] = useState(null);
   const [treeName, setTreeName] = useState(null);
@@ -89,6 +89,7 @@ function UserTree({ isGlobalRender = false, userId }) {
         isGlobalRender={isGlobalRender}
         treeName={treeName}
         currentUserId={userId}
+        currentUserMail={userMail}
       />
     </div>
   );

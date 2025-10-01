@@ -161,9 +161,11 @@ return (
             />
             <span className="toggle-slider"></span>
             <span className="toggle-text">
-              <strong>Public Tree</strong>
+              <strong>
+                {isPublic ? 'Public Tree' : 'Private Tree'}
+              </strong>
               <span className="toggle-description">
-                {isPublic ? 'Anyone with the link can view' : 'Only you and collaborators can view'}
+                {isPublic ? 'Anyone on the app can view' : 'Only you and anyone with the link can view'}
               </span>
             </span>
           </label>

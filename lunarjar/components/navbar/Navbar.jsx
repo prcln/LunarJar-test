@@ -40,17 +40,17 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="desktop-menu">
-          <Link to="/" className={`nav-link ${isActive('/')}`}>
-            Home
-          </Link>
-          <Link to="/" className={`nav-link ${isActive('/form')}`}>
-            Make a Wish
-          </Link>
-          <Link to="/" className={`nav-link ${isActive('/render')}`}>
-            View Wishes
-          </Link>
           <Link to="/me/tree" className={`nav-link ${isActive('/me/tree')}`}>
             My Tree
+          </Link>
+          <Link to="/create" className={`nav-link ${isActive('/create')}`}>
+            Create Tree
+          </Link>
+          <Link to="/community/tree" className={`nav-link ${isActive('/')}`}>
+            Community Tree
+          </Link>
+          <Link to="/public/trees" className={`nav-link ${isActive('/public/trees')}`}>
+            Public Trees
           </Link>
         </div>
 
@@ -95,32 +95,32 @@ export default function Navbar() {
       {/* Mobile Menu Dropdown */}
       <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
         <Link 
-          to="/" 
+          to="/me/tree" 
           className={`mobile-link ${isActive('/')}`}
           onClick={() => setMenuOpen(false)}
         >
-          Home
+          My Tree
         </Link>
         <Link 
-          to="/form" 
+          to="/create" 
           className={`mobile-link ${isActive('/form')}`}
           onClick={() => setMenuOpen(false)}
         >
-          Make a Wish
+          Create Tree
         </Link>
         <Link 
-          to="/render" 
+          to="/community/tree" 
           className={`mobile-link ${isActive('/render')}`}
           onClick={() => setMenuOpen(false)}
         >
-          View Wishes
+          Community Tree
         </Link>
         <Link 
-          to="/me/tree" 
+          to="/public/trees" 
           className={`mobile-link ${isActive('/me/tree')}`}
           onClick={() => setMenuOpen(false)}
         >
-          My Tree
+          Public Trees
         </Link>
         {user && (
           <button 
