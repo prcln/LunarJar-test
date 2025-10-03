@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+
 import { collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
 import { db } from '../../firebase.js';
 
@@ -9,14 +9,14 @@ import ShareTree from '../../components/share-tree/share-tree.jsx';
 import './UserTree.css'; // Add the CSS file
 import { fetchTreeBySlug } from '../../utils/fetchTreeBySlug.js';
 
-function PublicTree({ isGlobalRender = false, userId }) {
-  const { slug } = useParams();
+function PublicTree({ isGlobalRender = false, userId, userMail }) {
+  const slug = import.meta.env.VITE_COMMUNITY_TREE_ID;
   const [treeId, setTreeId] = useState(null);
   const [treeName, setTreeName] = useState(null);
   const [loading, setLoading] = useState(!isGlobalRender);
   const [error, setError] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
-
+  console.log(slug);
   const handleWishSubmitted = () => {
     console.log('🔄 Refreshing wishes...');
     setRefreshKey(prev => prev + 1);
@@ -89,6 +89,7 @@ function PublicTree({ isGlobalRender = false, userId }) {
         isGlobalRender={isGlobalRender}
         treeName={treeName}
         currentUserId={userId}
+        currentUserMail={userMail}
       />
     </div>
   );

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
-import { collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+import { onAuthStateChanged } from 'firebase/auth';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../../firebase.js';
 
 import './create-tree.css'
-import { createUniqueSlug } from '../../utils/slug.js';
+import { createUniqueSlug } from '../../utils/slugGen.js';
 
 export default function CreateTree() {
 const [user, setUser] = useState(null);

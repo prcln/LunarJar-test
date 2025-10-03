@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useParams } from "react-router-dom";
-import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase.js';
 
 // named export {}
@@ -14,7 +14,9 @@ import Navbar from '../components/navbar/Navbar.jsx';
 import ShareTree from '../components/share-tree/share-tree.jsx';
 import CreateTree from '../components/create-tree/create-tree.jsx';
 import TreeList from '../components/tree-list/tree-list.jsx';
+import Tree from '../components/tree/tree.jsx';
 
+// Page
 import PublicTree from '../pages/PublicTree/PublicTree.jsx'
 
 //       <Route path="/" element={<>      <WishForm/> <WishRender/> </>} />
@@ -60,7 +62,19 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        
+
+        <Route 
+          path="/tree" 
+          element={
+            <ProtectedRoute>
+              <Tree 
+              wishCount={20} 
+              daysUntilNewYear={15} 
+              />
+            </ProtectedRoute>
+          } 
+        />
+
           <Route 
           path="/create" 
           element={

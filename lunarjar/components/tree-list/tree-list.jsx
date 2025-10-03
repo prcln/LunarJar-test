@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { auth, db } from '../../firebase.js';
-import { collection, addDoc, getDocs, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+import { collection, addDoc, getDocs, query, where, orderBy } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 
 import '../wish-render/wish-render.css';
@@ -33,8 +33,6 @@ const TreeList = ({ userId, isPublic=false }) => {
     
     setDisplayedTrees(filtered);
   }, [searchTerm, trees]);
-  // Debug
-  console.log(userId);
 
   const fetchUserTrees = async () => {
     setLoading(true);

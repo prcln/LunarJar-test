@@ -1,14 +1,14 @@
-import { db } from '../../firebase.js';
+
 import { collection, addDoc, getDoc, getDocs, query, where, orderBy, limit, doc, deleteDoc, updateDoc, increment } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
-import { canDeleteWish, getUserTreeRole } from '../../utils/checkPerm.js';
 
-import {CATEGORY_COLORS, CATEGORY_NAMES} from '../../constants/wishes-setup.js';
+import { db } from '../../firebase.js';
+import { canDeleteWish, getUserTreeRole } from '../../utils/checkPerm.js';
+import WishModal from '../../components/wish-modal/'
 
 import './wish-render.css';
-import { getUserTreeRoleHK, useWishPermissions } from '../../hooks/role.js';
 
-export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlobalRender=false, treeName, currentUserId, currentUserMail }) {
+export default function WishRenderModal({ currentTreeId='', refreshTrigger = 0, isGlobalRender=false, treeName, currentUserId, currentUserMail }) {
   console.log('🎯 WishRender received:', { currentTreeId, refreshTrigger, isGlobalRender, currentUserId, currentUserMail });
 
   const [wishes, setWishes] = useState([]);
@@ -19,17 +19,60 @@ export default function WishRender({ currentTreeId='', refreshTrigger = 0, isGlo
   const [stats, setStats] = useState({ total: 0, today: 0 });
   const [filterCategory, setFilterCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [userRole, setUserRole] = useState(null);
   const [deletingWishId, setDeletingWishId] = useState(null);
+  const [wishPermissions, setWishPermissions] = useState({});
 
-  // Category's Setup
-  const categoryColors = CATEGORY_COLORS;
-  const categoryNames = CATEGORY_NAMES;
+  const categoryColors = {
+    'personal': 'category-personal',
+    'career': 'category-career', 
+    'relationships': 'category-relationships',
+    'health': 'category-health',
+    'dreams': 'category-dreams',
+    'other': 'category-other'
+  };
+
+  const categoryNames = {
+    'personal': 'Personal Growth',
+    'career': 'Career & Success',
+    'relationships': 'Love & Relationships', 
+    'health': 'Health & Wellness',
+    'dreams': 'Dreams & Aspirations',
+    'other': 'Other'
+  };
 
   // Check user's role on this tree
-  const userRole = getUserTreeRoleHK(currentUserId, currentTreeId, currentUserMail);
-  
+  useEffect(() => {
+    const checkRole = async () => {
+      if (currentUserId && currentTreeId) {
+        const role = await getUserTreeRole(currentUserId, currentTreeId, currentUserMail);
+        setUserRole(role);
+        console.log('👤 User role on this tree:', role);
+      } else {
+        setUserRole(null);
+      }
+    };
+    checkRole();
+  }, [currentUserId, currentTreeId]);
+
   // Check permissions for each wish when wishes load
-  const wishPermissions = useWishPermissions(wishes, currentUserId);
+  useEffect(() => {
+    const checkWishPermissions = async () => {
+      if (!currentUserId || wishes.length === 0) return;
+
+      const permissions = {};
+      
+      for (const wish of wishes) {
+        const canDelete = await canDeleteWish(currentUserId, wish.id, wish.treeId);
+        permissions[wish.id] = { canDelete };
+      }
+      
+      setWishPermissions(permissions);
+      console.log('🔐 Wish permissions calculated:', permissions);
+    };
+
+    checkWishPermissions();
+  }, [wishes, currentUserId]);
 
   // Delete wish function
   const handleDeleteWish = async (wishId, treeId) => {

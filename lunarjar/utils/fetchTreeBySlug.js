@@ -1,4 +1,4 @@
-import { collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase.js';
 
 export const fetchTreeBySlug = async ( slug, userId ) => {
