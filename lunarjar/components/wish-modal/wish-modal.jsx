@@ -1,7 +1,15 @@
 import { useState } from 'react';
-import { X, Heart, MessageCircle, Share2, User, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Heart, MessageCircle, Share2, User, Check } from 'lucide-react';
+import './wish-modal.css';
 
-const WishModal = ({ wish, isOpen, onClose }) => {
+const WishModal = ({ 
+  wish, 
+  isOpen, 
+  onClose,
+  currentIndex = 0,
+  totalWishes = 0,
+  onNavigate
+ }) => {
   const [isLiked, setIsLiked] = useState(wish?.isLiked || false);
   const [likeCount, setLikeCount] = useState(wish?.likes || 0);
   const [showComments, setShowComments] = useState(false);
@@ -13,6 +21,9 @@ const WishModal = ({ wish, isOpen, onClose }) => {
   const [copied, setCopied] = useState(false);
 
   if (!isOpen || !wish) return null;
+
+  const hasPrev = currentIndex > 0;
+  const hasNext = currentIndex < totalWishes - 1;
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -31,7 +42,7 @@ const WishModal = ({ wish, isOpen, onClose }) => {
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(`${window.location.origin}/wish/${wish.id}`);
+    navigator.clipboard.writeText(`${window.location.origin}/tree/${wish.id}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -65,146 +76,120 @@ const WishModal = ({ wish, isOpen, onClose }) => {
         animation: 'fadeIn 0.2s ease-out'
       }}
       onClick={onClose}
+      tabIndex={0}
     >
-      <div 
-        style={{
-          background: 'white',
-          padding: '30px',
-          borderRadius: '20px',
-          maxWidth: '500px',
-          width: '100%',
-          border: '3px solid #DC143C',
-          animation: 'modalScale 0.3s ease-out'
-        }}
+      {/* Navigation Buttons */}
+      {hasPrev && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleNavigation('prev');
+          }}
+          className="wish-modal-nav-button wish-modal-nav-prev"
+          aria-label="Previous wish"
+        >
+          <ChevronLeft className="wish-modal-nav-icon" />
+        </button>
+      )}
+
+      {hasNext && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleNavigation('next');
+          }}
+          className="wish-modal-nav-button wish-modal-nav-next"
+          aria-label="Next wish"
+        >
+          <ChevronRight className="wish-modal-nav-icon" />
+        </button>
+      )}
+
+      {/* Modal Content */}
+      <div
+        className="wish-modal-content"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-          <h2 style={{ color: '#8B0000', margin: 0, fontSize: '24px', fontWeight: 'bold' }}>
-            Wish Details
-          </h2>
+        <div className="wish-modal-header">
+          <h2 className="wish-modal-title">Wish Details</h2>
           <button
             onClick={onClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '4px',
-              color: '#666',
-              fontSize: '24px',
-              lineHeight: '1'
-            }}
+            className="wish-modal-close"
           >
             ×
           </button>
         </div>
 
-        {/* Author Info */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '20px', borderBottom: '1px solid #eee' }}>
+        {/* Author */}
+        <div className="wish-modal-author">
           {wish.author?.avatar ? (
-            <img src={wish.author.avatar} alt={wish.author.name} style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+            <img
+              src={wish.author.avatar}
+              alt={wish.author.name}
+              className="wish-modal-avatar"
+            />
           ) : (
-            <div style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #DC143C, #8B0000)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <User style={{ width: '20px', height: '20px', color: 'white' }} />
+            <div className="wish-modal-avatar-placeholder">
+              <User className="wish-modal-avatar-icon" />
             </div>
           )}
           <div>
-            <div style={{ fontWeight: '600', color: '#333' }}>
-              {wish.author?.isAnonymous ? 'Anonymous' : (wish.author?.name || 'Anonymous')}
+            <div className="wish-modal-author-name">
+              {wish.author?.isAnonymous
+                ? 'Anonymous'
+                : wish.author?.name || 'Anonymous'}
             </div>
-            <div style={{ fontSize: '12px', color: '#999' }}>{formatDate(wish.createdAt)}</div>
+            <div className="wish-modal-author-date">{formatDate(wish.createdAt)}</div>
           </div>
         </div>
 
         {/* Wish Content */}
-        <p style={{
-          fontSize: '18px',
-          fontStyle: 'italic',
-          marginBottom: '20px',
-          color: '#333',
-          lineHeight: '1.6',
-          padding: '15px',
-          background: '#f9f9f9',
-          borderRadius: '10px',
-          borderLeft: '4px solid #DC143C'
-        }}>
+        <p className="wish-modal-text">
           "{wish.text}"
         </p>
 
         {/* Action Buttons */}
-        <div style={{ display: 'flex', gap: '10px', marginBottom: showComments ? '20px' : '0' }}>
+        <div className="wish-modal-actions">
           <button
-            onClick={handleLike}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '10px 16px',
-              borderRadius: '8px',
-              border: 'none',
-              cursor: 'pointer',
-              fontWeight: '600',
-              background: isLiked ? '#DC143C' : '#f0f0f0',
-              color: isLiked ? 'white' : '#DC143C',
-              transition: 'all 0.2s'
+            onClick={(e) => {
+              e.stopPropagation();
+              handleLike();
             }}
+            className={`wish-modal-action-btn ${isLiked ? 'liked' : ''}`}
           >
-            <Heart style={{ width: '16px', height: '16px', fill: isLiked ? 'currentColor' : 'none' }} />
+            <Heart
+              className={`wish-modal-action-icon ${isLiked ? 'filled' : ''}`}
+            />
             {likeCount}
           </button>
 
           <button
-            onClick={() => setShowComments(!showComments)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '10px 16px',
-              borderRadius: '8px',
-              border: 'none',
-              cursor: 'pointer',
-              fontWeight: '600',
-              background: '#f0f0f0',
-              color: '#DC143C',
-              transition: 'all 0.2s'
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowComments(!showComments);
             }}
+            className="wish-modal-action-btn"
           >
-            <MessageCircle style={{ width: '16px', height: '16px' }} />
+            <MessageCircle className="wish-modal-action-icon" />
             {wish.comments || comments.length}
           </button>
 
           <button
-            onClick={handleCopy}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '10px 16px',
-              borderRadius: '8px',
-              border: 'none',
-              cursor: 'pointer',
-              fontWeight: '600',
-              background: '#f0f0f0',
-              color: '#DC143C',
-              transition: 'all 0.2s'
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCopy();
             }}
+            className="wish-modal-action-btn"
           >
             {copied ? (
               <>
-                <Check style={{ width: '16px', height: '16px' }} />
+                <Check className="wish-modal-action-icon" />
                 Copied!
               </>
             ) : (
               <>
-                <Share2 style={{ width: '16px', height: '16px' }} />
+                <Share2 className="wish-modal-action-icon" />
                 Share
               </>
             )}
@@ -213,91 +198,53 @@ const WishModal = ({ wish, isOpen, onClose }) => {
 
         {/* Comments Section */}
         {showComments && (
-          <div style={{ borderTop: '1px solid #eee', paddingTop: '20px' }}>
-            <h4 style={{ color: '#8B0000', marginBottom: '15px', fontSize: '14px', fontWeight: 'bold' }}>
-              Comments
-            </h4>
+          <div className="wish-modal-comments">
+            <h4 className="wish-modal-comments-title">Comments</h4>
 
-            {/* Comment Form */}
-            <div style={{ marginBottom: '15px', display: 'flex', gap: '8px' }}>
+            {/* Comment Input */}
+            <div className="wish-modal-comment-input">
               <input
                 type="text"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="Add your blessing..."
-                style={{
-                  flex: 1,
-                  padding: '10px 15px',
-                  border: '2px solid #ddd',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  outline: 'none'
-                }}
                 onKeyPress={(e) => e.key === 'Enter' && handleAddComment(e)}
-                onFocus={(e) => e.target.style.borderColor = '#DC143C'}
-                onBlur={(e) => e.target.style.borderColor = '#ddd'}
+                className="wish-modal-input"
               />
               <button
-                onClick={handleAddComment}
-                style={{
-                  padding: '10px 20px',
-                  background: '#DC143C',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  fontSize: '14px'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddComment(e);
                 }}
+                className="wish-modal-send-btn"
               >
                 Send
               </button>
             </div>
 
             {/* Comments List */}
-            <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+            <div className="wish-modal-comments-list">
               {comments.map((c) => (
-                <div key={c.id} style={{
-                  background: '#f9f9f9',
-                  padding: '12px',
-                  borderRadius: '8px',
-                  marginBottom: '8px'
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '5px' }}>
-                    <div style={{
-                      width: '24px',
-                      height: '24px',
-                      borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #DC143C, #8B0000)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <User style={{ width: '12px', height: '12px', color: 'white' }} />
+                <div
+                  key={c.id}
+                  className="wish-modal-comment"
+                >
+                  <div className="wish-modal-comment-header">
+                    <div className="wish-modal-comment-avatar">
+                      <User className="wish-modal-comment-avatar-icon" />
                     </div>
-                    <span style={{ fontWeight: '600', fontSize: '13px', color: '#333' }}>{c.author}</span>
-                    <span style={{ fontSize: '11px', color: '#999' }}>{c.time}</span>
+                    <span className="wish-modal-comment-author">{c.author}</span>
+                    <span className="wish-modal-comment-time">{c.time}</span>
                   </div>
-                  <p style={{ fontSize: '13px', color: '#666', margin: 0, paddingLeft: '32px' }}>{c.text}</p>
+                  <p className="wish-modal-comment-text">{c.text}</p>
                 </div>
               ))}
             </div>
           </div>
         )}
       </div>
-      
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes modalScale {
-          from { opacity: 0; transform: scale(0.95); }
-          to { opacity: 1; transform: scale(1); }
-        }
-      `}</style>
     </div>
   );
-};
+}
 
 export default WishModal;

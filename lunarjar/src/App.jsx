@@ -165,14 +165,20 @@ function App() {
         <Route 
           path="/test" 
           element={
-            <ApricotTreeDemo/>
+            <ProtectedRoute>
+              <ApricotTreeDemo/>
+            </ProtectedRoute>
+
           } 
         />
 
         <Route 
           path="/pos" 
           element={
-            <DecorationPositionFinder/>
+            <ProtectedRoute>
+              <DecorationPositionFinder/>
+            </ProtectedRoute>
+            
           } 
         />
       </Routes>

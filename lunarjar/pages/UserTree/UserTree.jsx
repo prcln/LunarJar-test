@@ -8,6 +8,7 @@ import WishRender from '../../components/wish-render/wish-render.jsx';
 import ShareTree from '../../components/share-tree/share-tree.jsx';
 import './UserTree.css'; // Add the CSS file
 import { fetchTreeBySlug } from '../../utils/fetchTreeBySlug.js';
+import ApricotTreeDemo from '../../components/tree/realtree.jsx';
 
 function UserTree({ isGlobalRender = false, userId, userMail }) {
   const { slug } = useParams();
@@ -47,50 +48,87 @@ function UserTree({ isGlobalRender = false, userId, userMail }) {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px' }}>
-        Loading tree... 🌳
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #FFF8DC 0%, #FFE4B5 100%)'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '48px', marginBottom: '20px' }}>🌳</div>
+          <div style={{ fontSize: '18px', color: '#8B0000' }}>Loading your wish tree...</div>
+        </div>
       </div>
     );
   }
 
   if (error && !isGlobalRender) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px' }}>
-        <div style={{ fontSize: '18px', color: '#e53e3e', marginBottom: '20px' }}>
-          {error}
-        </div>
-        <button onClick={() => window.history.back()}>Go Back</button>
-      </div>
+      <ErrorDisplay 
+        message={error}
+        title="Unable to Load Tree"
+        variant="centered"
+        showBackButton={true}
+        showRefreshButton={true}
+        onRefresh={() => window.location.reload()}
+      />
     );
   }
 
   return (
-    <div className="form-render-page">
-      {/* Left side - Wish Form */}
-      <div className="wish-form-container">
-        <WishForm 
-          currentTreeId={treeId} 
-          onSubmitSuccess={handleWishSubmitted} 
-        />
+    <div className="user-tree-page">
+      {/* Top Section - Wish Tree Visualization */}
+      <div className="tree-visualization-section">
+        <div className="tree-header">
+          <h1 className="tree-title">
+            🌸 {treeName || 'Apricot Blossom Wish Tree'} 🌸
+          </h1>
+          <p className="tree-subtitle">
+            Click on the decorations to read wishes!
+          </p>
+        </div>
+        
+        {/* Apricot Tree with Decorations */}
+        <div className="tree-container">
+          <ApricotTreeDemo
+            currentTreeId={treeId}
+          />
+        </div>
       </div>
 
-      {/* Top right - Share Tree */}
-      {!isGlobalRender && (
-        <ShareTree 
-        currentTreeId={treeId}
-        slug={slug}
-        />
-      )}
+      {/* Main Content Grid */}
+      <div className="form-render-page">
+        {/* Left side - Wish Form */}
+        <div className="wish-form-container">
+          <WishForm 
+            currentTreeId={treeId} 
+            onSubmitSuccess={handleWishSubmitted} 
+          /> 
+        </div>
 
-      {/* Bottom right - Wish Render */}
-      <WishRender 
-        currentTreeId={treeId} 
-        refreshTrigger={refreshKey} 
-        isGlobalRender={isGlobalRender}
-        treeName={treeName}
-        currentUserId={userId}
-        currentUserMail={userMail}
-      />
+        {/* Top right - Share Tree */}
+        {!isGlobalRender && (
+          <div className="share-tree-container">
+            <ShareTree 
+              currentTreeId={treeId}
+              slug={slug}
+            />
+          </div>
+        )}
+
+        {/* Bottom right - Wish Render */}
+        <div className="wish-render-container">
+          <WishRender 
+            currentTreeId={treeId} 
+            refreshTrigger={refreshKey} 
+            isGlobalRender={isGlobalRender}
+            treeName={treeName}
+            currentUserId={userId}
+            currentUserMail={userMail}
+          />
+        </div>
+      </div>
     </div>
   );
 }

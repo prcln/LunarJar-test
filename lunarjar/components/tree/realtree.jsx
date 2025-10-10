@@ -306,17 +306,17 @@ const renderDecoration = (wish, index) => {
 };
 
 // Example usage component
-export default function ApricotTreeDemo() {
+export default function ApricotTreeDemo({currentTreeId, refreshTrigger}) {
   const [selectedWish, setSelectedWish] = useState(null);
+  const [currentWishIndex, setCurrentWishIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [treeWishes, setTreeWishes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const treeId = 'ffn8D9wDbT3Fg4njcT1L';
   // Load wishes when component mounts or treeId changes
   useEffect(() => {
     const loadWishes = async () => {
-      if (!treeId) {
+      if (!currentTreeId) {
         console.warn('No treeId provided');
         setLoading(false);
         return;
@@ -324,8 +324,10 @@ export default function ApricotTreeDemo() {
 
       try {
         setLoading(true);
-        const result = await wishService.getWishesByTree(treeId, {
-          limitCount: 50, // Adjust as needed
+        console.log('🔄 Loading wishes...', { refreshTrigger, currentTreeId });
+        
+        const result = await wishService.getWishesByTree(currentTreeId, {
+          limitCount: 50,
           orderByField: 'createdAt',
           orderDirection: 'asc'
         });
@@ -341,13 +343,13 @@ export default function ApricotTreeDemo() {
     };
 
     loadWishes();
-  }, [treeId]);
+  }, [currentTreeId, refreshTrigger]);
 
-
-  // Handle decoration click
-  const handleDecorationClick = (wish, index) => {
-    // Format wish data for the modal
-    const formattedWish = {
+  // Add this helper function
+  const formatWish = (wish, index) => {
+    if (!wish) return null;
+    
+    return {
       id: wish?.id || `wish-${index}`,
       text: wish?.wish || wish?.text || `Wish #${index + 1}`,
       author: {
@@ -360,28 +362,45 @@ export default function ApricotTreeDemo() {
       comments: wish?.comments || 0,
       isLiked: wish?.isLiked || false,
       category: wish?.category || 'other',
-      treeId: wish?.treeId || treeId
+      treeId: wish?.treeId || currentTreeId
     };
+  };
 
+  // Handle decoration click
+  const handleDecorationClick = (wish, index) => {
+    // Format wish data for the modal
+    const formattedWish = formatWish(wish, index);
+    setCurrentWishIndex(index);
     setSelectedWish(formattedWish);
     setIsModalOpen(true);
   };
 
+
+  const handleNavigate = (direction) => {
+    let newIndex = currentWishIndex;
+    
+    if (direction === 'prev' && currentWishIndex > 0) {
+      newIndex = currentWishIndex - 1;
+    } else if (direction === 'next' && currentWishIndex < treeWishes.length - 1) {
+      newIndex = currentWishIndex + 1;
+    }
+    
+    if (newIndex !== currentWishIndex && treeWishes[newIndex]) {
+      setCurrentWishIndex(newIndex);
+      setSelectedWish(formatWish(treeWishes[newIndex], newIndex));
+    }
+  };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setTimeout(() => setSelectedWish(null), 300);
+    setTimeout(() => {
+      setSelectedWish(null);
+      setCurrentWishIndex(0);
+    }, 300);
   };
 
   return (
-    <div style={{ padding: '40px', background: 'linear-gradient(135deg, #FFF8DC 0%, #FFE4B5 100%)', minHeight: '100vh' }}>
-      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-        <h1 style={{ fontSize: '36px', color: '#8B0000', fontFamily: 'serif', marginBottom: '10px' }}>
-          🌸 Apricot Blossom Wish Tree 🌸
-        </h1>
-        <p style={{ fontSize: '18px', color: '#666' }}>
-          Click on the decorations to read wishes!
-        </p>
-      </div>
+    <div>
 
       <ApricotTreeWithDecorations 
         wishes={treeWishes}
@@ -393,6 +412,9 @@ export default function ApricotTreeDemo() {
         wish={selectedWish}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        currentIndex={currentWishIndex}
+        totalWishes={treeWishes.length}
+        onNavigate={handleNavigate}
       />
     </div>
   ); 

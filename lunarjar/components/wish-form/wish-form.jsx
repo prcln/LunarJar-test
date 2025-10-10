@@ -12,7 +12,7 @@ export default function WishForm({currentTreeId, onSubmitSuccess}) {
       name: '',
       isAnonymous: false,
       category: 'personal',
-      decoration: 'envelope'
+      decoration: 'envelope',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
