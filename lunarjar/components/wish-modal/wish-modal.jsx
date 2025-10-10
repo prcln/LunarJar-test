@@ -59,23 +59,27 @@ const WishModal = ({
     }
   };
 
+  const handleNavigation = (direction) => {
+    if (onNavigate) {
+      onNavigate(direction);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowLeft' && hasPrev) {
+      handleNavigation('prev');
+    } else if (e.key === 'ArrowRight' && hasNext) {
+      handleNavigation('next');
+    } else if (e.key === 'Escape') {
+      onClose();
+    }
+  };
+
   return (
-    <div 
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '16px',
-        zIndex: 1000,
-        animation: 'fadeIn 0.2s ease-out'
-      }}
+    <div
+      className="wish-modal-overlay"
       onClick={onClose}
+      onKeyDown={handleKeyDown}
       tabIndex={0}
     >
       {/* Navigation Buttons */}
