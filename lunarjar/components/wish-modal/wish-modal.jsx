@@ -1,10 +1,7 @@
 import { useState } from 'react';
-import { X, Heart, MessageCircle, Share2, User, Sparkles, Check } from 'lucide-react';
+import { X, Heart, MessageCircle, Share2, User, Check } from 'lucide-react';
 
-import './wish-modal.css'
-
-
-const WishModal = ({ wish = mockWish, isOpen, onClose }) => {
+const WishModal = ({ wish, isOpen, onClose }) => {
   const [isLiked, setIsLiked] = useState(wish?.isLiked || false);
   const [likeCount, setLikeCount] = useState(wish?.likes || 0);
   const [showComments, setShowComments] = useState(false);
@@ -52,190 +49,253 @@ const WishModal = ({ wish = mockWish, isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-60 backdrop-blur-sm animate-fadeIn">
-      <div className="relative max-w-lg w-full animate-hongbaoOpen">
-        
-        {/* Hongbao Envelope */}
-        <div className="relative bg-gradient-to-br from-red-600 via-red-500 to-red-700 rounded-3xl shadow-2xl overflow-hidden">
-          
-          {/* Decorative patterns */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-0 w-full h-full" style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            }}></div>
-          </div>
-
-          {/* Gold trim top */}
-          <div className="h-3 bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400"></div>
-
-          {/* Header with Chinese decoration */}
-          <div className="relative px-6 pt-8 pb-6">
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-4 p-2 rounded-full bg-red-800 bg-opacity-50 hover:bg-opacity-70 transition-all text-white z-10"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Decorative cloud pattern */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-              <div className="w-20 h-20 bg-yellow-400 rounded-full opacity-20 blur-xl"></div>
-            </div>
-
-            <div className="text-center relative z-10">
-              <div className="inline-block mb-3">
-                <div className="relative">
-                  <Sparkles className="w-10 h-10 text-yellow-300 animate-pulse" />
-                  <div className="absolute inset-0 bg-yellow-300 blur-lg opacity-50 animate-pulse"></div>
-                </div>
-              </div>
-              <h2 className="text-3xl font-bold text-yellow-300 mb-1" style={{ fontFamily: 'serif' }}>
-                恭喜发财
-              </h2>
-              <p className="text-yellow-100 text-sm">Gōng Xǐ Fā Cái</p>
-            </div>
-          </div>
-
-          {/* White paper content */}
-          <div className="bg-gradient-to-b from-amber-50 to-yellow-50 rounded-t-3xl mx-3 mb-3 shadow-inner">
-            
-            {/* Gold seal decoration */}
-            <div className="flex justify-center -mt-6 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg border-2 border-yellow-300">
-                <span className="text-red-600 text-xl font-bold">福</span>
-              </div>
-            </div>
-
-            {/* Author Info */}
-            <div className="px-6 pb-4 border-b-2 border-red-100">
-              <div className="flex items-center gap-3">
-                {wish.author?.avatar ? (
-                  <img src={wish.author.avatar} alt={wish.author.name} className="w-10 h-10 rounded-full border-2 border-red-300" />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center border-2 border-red-300">
-                    <User className="w-5 h-5 text-white" />
-                  </div>
-                )}
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-800">
-                    {wish.author?.isAnonymous ? 'Anonymous' : (wish.author?.name || 'Anonymous')}
-                  </h3>
-                  <p className="text-xs text-gray-500">{formatDate(wish.createdAt)}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Wish Content */}
-            <div className="px-6 py-5 max-h-64 overflow-y-auto">
-              <div className="relative">
-                {/* Decorative quotes */}
-                <div className="absolute -left-2 -top-2 text-4xl text-red-300 opacity-30 font-serif">"</div>
-                <p className="text-gray-700 leading-relaxed text-center italic px-4 relative z-10">
-                  {wish.text}
-                </p>
-                <div className="absolute -right-2 -bottom-2 text-4xl text-red-300 opacity-30 font-serif">"</div>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="px-6 pb-5 flex items-center justify-center gap-3">
-              <button
-                onClick={handleLike}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-medium transition-all shadow-md ${
-                  isLiked
-                    ? 'bg-gradient-to-r from-red-500 to-red-600 text-white'
-                    : 'bg-white text-red-600 hover:bg-red-50'
-                }`}
-              >
-                <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-                <span className="text-sm font-bold">{likeCount}</span>
-              </button>
-
-              <button
-                onClick={() => setShowComments(!showComments)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-white text-red-600 rounded-full font-medium hover:bg-red-50 transition-all shadow-md"
-              >
-                <MessageCircle className="w-4 h-4" />
-                <span className="text-sm font-bold">{wish.comments || comments.length}</span>
-              </button>
-
-              <button
-                onClick={handleCopy}
-                className="flex items-center gap-2 px-4 py-2.5 bg-white text-red-600 rounded-full font-medium hover:bg-red-50 transition-all shadow-md"
-              >
-                {copied ? (
-                  <>
-                    <Check className="w-4 h-4" />
-                    <span className="text-sm font-bold">Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <Share2 className="w-4 h-4" />
-                    <span className="text-sm font-bold">Share</span>
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* Comments Section */}
-            {showComments && (
-              <div className="border-t-2 border-red-100 bg-gradient-to-b from-yellow-50 to-amber-50">
-                <div className="px-6 py-4">
-                  <h4 className="font-bold text-red-700 mb-3 text-sm">Blessings & Comments</h4>
-                  
-                  {/* Comment Form */}
-                  <div className="mb-4">
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                        placeholder="Add your blessing..."
-                        className="flex-1 px-3 py-2 text-sm border-2 border-red-200 rounded-full focus:outline-none focus:border-red-400 transition-colors bg-white"
-                        onKeyPress={(e) => e.key === 'Enter' && handleAddComment(e)}
-                      />
-                      <button
-                        onClick={handleAddComment}
-                        className="px-5 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full font-medium hover:from-red-600 hover:to-red-700 transition-all shadow-md text-sm"
-                      >
-                        Send
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Comments List */}
-                  <div className="space-y-2 max-h-48 overflow-y-auto">
-                    {comments.map((c) => (
-                      <div key={c.id} className="bg-white p-3 rounded-2xl shadow-sm border border-red-100">
-                        <div className="flex items-start gap-2">
-                          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center flex-shrink-0">
-                            <User className="w-3.5 h-3.5 text-white" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="font-semibold text-xs text-gray-800">{c.author}</span>
-                              <span className="text-xs text-gray-400">{c.time}</span>
-                            </div>
-                            <p className="text-xs text-gray-600">{c.text}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Gold trim bottom */}
-          <div className="h-3 bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400"></div>
-
-          {/* Decorative golden coins floating */}
-          <div className="absolute top-20 left-8 w-6 h-6 rounded-full bg-yellow-400 opacity-20 animate-float"></div>
-          <div className="absolute top-32 right-12 w-4 h-4 rounded-full bg-yellow-300 opacity-30 animate-float-delayed"></div>
-          <div className="absolute bottom-32 left-12 w-5 h-5 rounded-full bg-yellow-400 opacity-20 animate-float"></div>
+    <div 
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px',
+        zIndex: 1000,
+        animation: 'fadeIn 0.2s ease-out'
+      }}
+      onClick={onClose}
+    >
+      <div 
+        style={{
+          background: 'white',
+          padding: '30px',
+          borderRadius: '20px',
+          maxWidth: '500px',
+          width: '100%',
+          border: '3px solid #DC143C',
+          animation: 'modalScale 0.3s ease-out'
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <h2 style={{ color: '#8B0000', margin: 0, fontSize: '24px', fontWeight: 'bold' }}>
+            Wish Details
+          </h2>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '4px',
+              color: '#666',
+              fontSize: '24px',
+              lineHeight: '1'
+            }}
+          >
+            ×
+          </button>
         </div>
+
+        {/* Author Info */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '20px', borderBottom: '1px solid #eee' }}>
+          {wish.author?.avatar ? (
+            <img src={wish.author.avatar} alt={wish.author.name} style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+          ) : (
+            <div style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #DC143C, #8B0000)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <User style={{ width: '20px', height: '20px', color: 'white' }} />
+            </div>
+          )}
+          <div>
+            <div style={{ fontWeight: '600', color: '#333' }}>
+              {wish.author?.isAnonymous ? 'Anonymous' : (wish.author?.name || 'Anonymous')}
+            </div>
+            <div style={{ fontSize: '12px', color: '#999' }}>{formatDate(wish.createdAt)}</div>
+          </div>
+        </div>
+
+        {/* Wish Content */}
+        <p style={{
+          fontSize: '18px',
+          fontStyle: 'italic',
+          marginBottom: '20px',
+          color: '#333',
+          lineHeight: '1.6',
+          padding: '15px',
+          background: '#f9f9f9',
+          borderRadius: '10px',
+          borderLeft: '4px solid #DC143C'
+        }}>
+          "{wish.text}"
+        </p>
+
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', gap: '10px', marginBottom: showComments ? '20px' : '0' }}>
+          <button
+            onClick={handleLike}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 16px',
+              borderRadius: '8px',
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: '600',
+              background: isLiked ? '#DC143C' : '#f0f0f0',
+              color: isLiked ? 'white' : '#DC143C',
+              transition: 'all 0.2s'
+            }}
+          >
+            <Heart style={{ width: '16px', height: '16px', fill: isLiked ? 'currentColor' : 'none' }} />
+            {likeCount}
+          </button>
+
+          <button
+            onClick={() => setShowComments(!showComments)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 16px',
+              borderRadius: '8px',
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: '600',
+              background: '#f0f0f0',
+              color: '#DC143C',
+              transition: 'all 0.2s'
+            }}
+          >
+            <MessageCircle style={{ width: '16px', height: '16px' }} />
+            {wish.comments || comments.length}
+          </button>
+
+          <button
+            onClick={handleCopy}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 16px',
+              borderRadius: '8px',
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: '600',
+              background: '#f0f0f0',
+              color: '#DC143C',
+              transition: 'all 0.2s'
+            }}
+          >
+            {copied ? (
+              <>
+                <Check style={{ width: '16px', height: '16px' }} />
+                Copied!
+              </>
+            ) : (
+              <>
+                <Share2 style={{ width: '16px', height: '16px' }} />
+                Share
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Comments Section */}
+        {showComments && (
+          <div style={{ borderTop: '1px solid #eee', paddingTop: '20px' }}>
+            <h4 style={{ color: '#8B0000', marginBottom: '15px', fontSize: '14px', fontWeight: 'bold' }}>
+              Comments
+            </h4>
+
+            {/* Comment Form */}
+            <div style={{ marginBottom: '15px', display: 'flex', gap: '8px' }}>
+              <input
+                type="text"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Add your blessing..."
+                style={{
+                  flex: 1,
+                  padding: '10px 15px',
+                  border: '2px solid #ddd',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  outline: 'none'
+                }}
+                onKeyPress={(e) => e.key === 'Enter' && handleAddComment(e)}
+                onFocus={(e) => e.target.style.borderColor = '#DC143C'}
+                onBlur={(e) => e.target.style.borderColor = '#ddd'}
+              />
+              <button
+                onClick={handleAddComment}
+                style={{
+                  padding: '10px 20px',
+                  background: '#DC143C',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  fontSize: '14px'
+                }}
+              >
+                Send
+              </button>
+            </div>
+
+            {/* Comments List */}
+            <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+              {comments.map((c) => (
+                <div key={c.id} style={{
+                  background: '#f9f9f9',
+                  padding: '12px',
+                  borderRadius: '8px',
+                  marginBottom: '8px'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '5px' }}>
+                    <div style={{
+                      width: '24px',
+                      height: '24px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #DC143C, #8B0000)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <User style={{ width: '12px', height: '12px', color: 'white' }} />
+                    </div>
+                    <span style={{ fontWeight: '600', fontSize: '13px', color: '#333' }}>{c.author}</span>
+                    <span style={{ fontSize: '11px', color: '#999' }}>{c.time}</span>
+                  </div>
+                  <p style={{ fontSize: '13px', color: '#666', margin: 0, paddingLeft: '32px' }}>{c.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+      
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes modalScale {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
     </div>
   );
 };

@@ -18,6 +18,8 @@ import Tree from '../components/tree/tree.jsx';
 
 // Page
 import PublicTree from '../pages/PublicTree/PublicTree.jsx'
+import ApricotTreeDemo from '../components/tree/realtree.jsx';
+import DecorationPositionFinder from '../components/svg-pos-finder/posfinder.jsx';
 
 //       <Route path="/" element={<>      <WishForm/> <WishRender/> </>} />
 
@@ -157,6 +159,20 @@ function App() {
               isGlobalRender={false} 
               userId={user?.uid} />
             </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/test" 
+          element={
+            <ApricotTreeDemo/>
+          } 
+        />
+
+        <Route 
+          path="/pos" 
+          element={
+            <DecorationPositionFinder/>
           } 
         />
       </Routes>

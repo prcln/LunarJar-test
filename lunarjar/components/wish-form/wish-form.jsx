@@ -1,5 +1,5 @@
 import { db } from '../../firebase.js';
-import { collection, doc, increment, addDoc, updateDoc, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+import { collection, doc, increment, addDoc, updateDoc, getDocs, query, where } from 'firebase/firestore';
 
 import { useState, useEffect } from 'react';
 import { auth } from '../../firebase.js';
@@ -8,11 +8,11 @@ import './wish-form.css'
 
 export default function WishForm({currentTreeId, onSubmitSuccess}) {
   const [wishData, setWishData] = useState({
-    name: '',
-    wish: '',
-    category: 'personal',
-    isAnonymous: false,
-    treeId: '',
+      wish: '',
+      name: '',
+      isAnonymous: false,
+      category: 'personal',
+      decoration: 'envelope'
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,6 +56,10 @@ export default function WishForm({currentTreeId, onSubmitSuccess}) {
     setWishData(prev => ({ ...prev, category: e.target.value }));
   };
 
+  const handleDecoChange = (e) => {
+    setWishData(prev => ({ ...prev, decoration: e.target.value }));
+  };
+
   const handleWishChange = (e) => {
     const value = e.target.value;
     setWishData(prev => ({ ...prev, wish: value }));
@@ -68,14 +72,17 @@ export default function WishForm({currentTreeId, onSubmitSuccess}) {
     setIsSubmitting(true);
 
     const wishPayload = {
-      name: wishData.isAnonymous ? 'Anonymous' : wishData.name,
-      wish: wishData.wish,
-      category: wishData.category,
-      isAnonymous: wishData.isAnonymous,
       userId: auth.currentUser?.uid,
       treeId: currentTreeId,
-      timestamp: new Date(),
-      createdAt: new Date().toISOString()
+      wish: wishData.wish,
+      name: wishData.isAnonymous ? 'Anonymous' : wishData.name,
+      isAnonymous: wishData.isAnonymous,
+      category: wishData.category,
+      decoration: wishData.decoration,
+      createdAt: new Date().toISOString(),
+      likes: 0,
+      comments: 0,
+      isLiked: false
     };
 
     try {
@@ -118,10 +125,11 @@ export default function WishForm({currentTreeId, onSubmitSuccess}) {
 
   const resetForm = () => {
     setWishData({
-      name: '',
       wish: '',
-      category: 'personal',
-      isAnonymous: false
+      name: '',
+      isAnonymous: false,
+      category: '',
+      decoration: '',
     });
     setCharCount(0);
   };
@@ -175,6 +183,23 @@ export default function WishForm({currentTreeId, onSubmitSuccess}) {
             <option value="health">Health & Wellness</option>
             <option value="dreams">Dreams & Aspirations</option>
             <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Decoration Selection */}
+      <div className="form-group">
+        <label htmlFor="decoration">Wish Decoration</label>
+        <div className="select-container">
+          <select 
+            id="decoration" 
+            className="form-select"
+            value={wishData.decoration}
+            onChange={handleDecoChange}
+          >
+            <option value="envelope">Envelope</option>
+            <option value="lantern">Lantern</option>
+            <option value="blossom">Blossom</option>
           </select>
         </div>
       </div>
