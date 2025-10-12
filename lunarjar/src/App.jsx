@@ -8,18 +8,21 @@ import { auth } from '../firebase.js';
 import WishForm from "../components/wish-form/wish-form.jsx"
 import WishRender from "../components/wish-render/wish-render.jsx";
 import UserTree from '../pages/UserTree/UserTree.jsx';
-import AuthComponent from '../components/auth-form/auth-form.jsx';
+import AuthComponent from '../components/auth-form/AuthComponent.jsx';
 import ProtectedRoute from '../components/ProtectedRoute.jsx';
 import Navbar from '../components/navbar/Navbar.jsx';
 import ShareTree from '../components/share-tree/share-tree.jsx';
 import CreateTree from '../components/create-tree/create-tree.jsx';
 import TreeList from '../components/tree-list/tree-list.jsx';
 import Tree from '../components/tree/tree.jsx';
-
-// Page
-import PublicTree from '../pages/PublicTree/PublicTree.jsx'
 import ApricotTreeDemo from '../components/tree/realtree.jsx';
 import DecorationPositionFinder from '../components/svg-pos-finder/posfinder.jsx';
+
+// Pages
+import PublicTree from '../pages/PublicTree/PublicTree.jsx'
+import Privacy from '../pages/Privacy/Privacy.jsx';
+import Terms from '../pages/Terms/terms.jsx';
+
 
 //       <Route path="/" element={<>      <WishForm/> <WishRender/> </>} />
 
@@ -53,6 +56,16 @@ function App() {
           element={user ? <Navigate to="/" replace /> : <AuthComponent />} 
         />
         
+        <Route
+          path="/terms"
+          element={<Terms />}      
+        />
+
+        <Route
+          path="/privacy"
+          element={<Privacy />}      
+        />
+
         {/* Protected routes - require authentication */}
         <Route 
           path="/" 
