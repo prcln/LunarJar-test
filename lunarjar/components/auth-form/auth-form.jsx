@@ -14,7 +14,7 @@ import '../../styles/public/auth.css'
 import { GoogleIcon } from '../../utils/icon/GoogleIcon.jsx';
 
 export default function AuthComponent() {
-  const [view, setView] = useState('login'); // 'login', 'signup', 'dashboard'
+  const [view, setView] = useState('login'); // 'login', 'signup', 'forgot', 'dashboard'
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');

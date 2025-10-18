@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useParams } from "react-router-dom";
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase.js';
+import './App.css'
 
 // named export {}
 // default export no {}
@@ -22,6 +23,7 @@ import DecorationPositionFinder from '../components/svg-pos-finder/posfinder.jsx
 import PublicTree from '../pages/PublicTree/PublicTree.jsx'
 import Privacy from '../pages/Privacy/Privacy.jsx';
 import Terms from '../pages/Terms/terms.jsx';
+import ShortLinkRedirectPage from '../components/Redirect.jsx';
 
 
 //       <Route path="/" element={<>      <WishForm/> <WishRender/> </>} />
@@ -159,6 +161,15 @@ function App() {
               userId={user?.uid}
               userMail={user?.email}
               />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/t/:shortId" 
+          element={
+            <ProtectedRoute>
+              <ShortLinkRedirectPage/>
             </ProtectedRoute>
           } 
         />

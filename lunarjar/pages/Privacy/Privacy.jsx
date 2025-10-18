@@ -1,33 +1,46 @@
 import React from "react";
+import '../legal-pages.css';
 
 export default function Privacy() {
   return (
-    <div className="max-w-3xl mx-auto p-6 text-gray-800">
-      <h1 className="text-3xl font-bold mb-4">Privacy Policy</h1>
-      <p className="text-sm text-gray-500 mb-8">Last updated: October 12, 2025</p>
+    <div className="legal-container">
+      <div className="legal-header">
+        <h1 className="legal-title">Privacy Policy</h1>
+        <p className="legal-last-updated">Last updated: October 12, 2025</p>
+      </div>
 
-      <h2 className="text-xl font-semibold mt-6 mb-2">1. Information We Collect</h2>
-      <p>
-        We may collect personal data (like name, email) and usage data (like IP
-        address, browser type).
-      </p>
+      <section className="legal-section">
+        <h2 className="legal-section-title">1. Information We Collect</h2>
+        <p className="legal-text">
+          We may collect personal data (like name, email) and usage data (like IP
+          address, browser type).
+        </p>
+      </section>
 
-      <h2 className="text-xl font-semibold mt-6 mb-2">2. How We Use Information</h2>
-      <p>
-        We use data to provide and improve our Services, communicate with users,
-        and ensure security.
-      </p>
+      <section className="legal-section">
+        <h2 className="legal-section-title">2. How We Use Information</h2>
+        <p className="legal-text">
+          We use data to provide and improve our Services, communicate with users,
+          and ensure security.
+        </p>
+      </section>
 
-      <h2 className="text-xl font-semibold mt-6 mb-2">3. Data Sharing</h2>
-      <p>
-        We do not sell personal information. We may share data with trusted
-        third-party providers who help operate the Services.
-      </p>
+      <section className="legal-section">
+        <h2 className="legal-section-title">3. Data Sharing</h2>
+        <p className="legal-text">
+          We do not sell personal information. We may share data with trusted
+          third-party providers who help operate the Services.
+        </p>
+      </section>
 
-      <h2 className="text-xl font-semibold mt-6 mb-2">4. Contact</h2>
-      <p>
-        Questions? Contact us at <strong>your@email.com</strong>.
-      </p>
+      <section className="legal-section">
+        <h2 className="legal-section-title">4. Contact</h2>
+        <div className="legal-contact-box">
+          <p>
+            Questions? Contact us at <span className="legal-emphasis">your@email.com</span>
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

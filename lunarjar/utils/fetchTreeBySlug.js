@@ -1,7 +1,7 @@
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase.js';
 
-export const fetchTreeBySlug = async ( slug, userId ) => {
+export const fetchTreeBy = async ( slug, userId ) => {
 
   if (!slug) {
     throw new Error('No tree slug provided');

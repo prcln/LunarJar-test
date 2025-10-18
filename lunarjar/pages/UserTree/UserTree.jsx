@@ -1,76 +1,153 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
-import { db } from '../../firebase.js';
+import { doc, onSnapshot, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+import { nanoid } from 'nanoid';
 
+// Project Imports
+import { db, auth } from '../../firebase.js';
 import WishForm from '../../components/wish-form/wish-form.jsx';
 import WishRender from '../../components/wish-render/wish-render.jsx';
-import ShareTree from '../../components/share-tree/share-tree.jsx';
-import './UserTree.css'; // Add the CSS file
-import { fetchTreeBySlug } from '../../utils/fetchTreeBySlug.js';
+import ShareModal from '../../components/share-tree/share-tree.jsx';
+import ErrorDisplay from '../../components/errordisplay/errordisplay.jsx';
 import ApricotTreeDemo from '../../components/tree/realtree.jsx';
+import './UserTree.css';
 
-function UserTree({ isGlobalRender = false, userId, userMail }) {
+/**
+ * Main component for displaying a user's wish tree page.
+ * It handles fetching tree data, authentication, and rendering wishes.
+ */
+function UserTree() {
   const { slug } = useParams();
-  const [treeId, setTreeId] = useState(null);
-  const [treeName, setTreeName] = useState(null);
-  const [loading, setLoading] = useState(!isGlobalRender);
-  const [error, setError] = useState(null);
-  const [refreshKey, setRefreshKey] = useState(0);
 
-  const handleWishSubmitted = () => {
-    console.log('🔄 Refreshing wishes...');
-    setRefreshKey(prev => prev + 1);
-  };
+  // --- State Management ---
+  const [user, setUser] = useState(null);
+  const [treeData, setTreeData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [wishRefreshTrigger, setWishRefreshTrigger] = useState(0);
+  const [isRegenerating, setIsRegenerating] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+
+  // --- Hooks ---
+
+  // Effect for handling user authentication state
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, setUser);
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
-    if (isGlobalRender) {
+    if (cooldown <= 0) return;
+
+    // Set up an interval to decrease the cooldown every second
+    const timer = setInterval(() => {
+      setCooldown((prev) => prev - 1);
+    }, 1000);
+
+    // Clean up the interval when the component unmounts or cooldown reaches 0
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
+  // Effect for fetching and listening to tree data in real-time
+  useEffect(() => {
+    if (!slug) {
+      setError('No tree specified in the URL.');
       setLoading(false);
       return;
     }
 
-    const loadTree = async () => {
+    setLoading(true);
+    let unsubscribe = () => {}; // Initialize an empty unsubscribe function
+
+    const setupListener = async () => {
       try {
-        setLoading(true);
-        const tree = await fetchTreeBySlug(slug, userId);
-        setTreeId(tree.id);
-        setTreeName(tree.name);
-        setError(null);
+        // First, find the tree's document ID using its slug
+        const treesRef = collection(db, 'trees');
+        const q = query(treesRef, where('slug', '==', slug));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          throw new Error("This Wish Tree could not be found.");
+        }
+
+        const treeDoc = querySnapshot.docs[0];
+        const treeDocRef = doc(db, 'trees', treeDoc.id);
+
+        // Now, set up the real-time listener on that document
+        unsubscribe = onSnapshot(treeDocRef, (docSnap) => {
+          if (docSnap.exists()) {
+            setTreeData({ id: docSnap.id, ...docSnap.data() });
+            setError(null);
+          } else {
+            throw new Error("This Wish Tree no longer exists.");
+          }
+          setLoading(false);
+        }, (err) => {
+            console.error("Error with Firestore listener:", err);
+            setError("Could not connect to the Wish Tree data.");
+            setLoading(false);
+        });
+
       } catch (err) {
-        setError(err.message || 'Failed to load tree');
-      } finally {
+        setError(err.message);
         setLoading(false);
       }
     };
 
-    loadTree();
-  }, [slug, userId, isGlobalRender]);
+    setupListener();
+
+    // Cleanup: unsubscribe from the listener when the component unmounts or the slug changes
+    return () => unsubscribe();
+  }, [slug]);
+
+  // --- Event Handlers ---
+
+  const handleWishSubmitted = () => {
+    setWishRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleRegenerateInviteLink = useCallback(async () => {
+    if (isRegenerating || cooldown > 0 || !treeData?.id) return;
+    
+    setIsRegenerating(true);
+    
+    try {
+      const newToken = nanoid(10);
+      const treeDocRef = doc(db, 'trees', treeData.id);
+      await updateDoc(treeDocRef, { inviteToken: newToken });
+
+      // Start a 30-second cooldown after success
+      setCooldown(30);
+
+    } catch (err) {
+      console.error("Error regenerating link:", err);
+      // Optionally show an error to the user
+    } finally {
+      setIsRegenerating(false);
+    }
+  }, [treeData?.id, isRegenerating, cooldown]);
+
+  // --- Render Logic ---
 
   if (loading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #FFF8DC 0%, #FFE4B5 100%)'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '48px', marginBottom: '20px' }}>🌳</div>
-          <div style={{ fontSize: '18px', color: '#8B0000' }}>Loading your wish tree...</div>
+      <div className="loading-container">
+        <div className="loading-content">
+          <div className="loading-icon">🌳</div>
+          <div className="loading-text">Loading your wish tree...</div>
         </div>
       </div>
     );
   }
 
-  if (error && !isGlobalRender) {
+  if (error) {
     return (
       <ErrorDisplay 
         message={error}
         title="Unable to Load Tree"
-        variant="centered"
-        showBackButton={true}
-        showRefreshButton={true}
         onRefresh={() => window.location.reload()}
       />
     );
@@ -78,56 +155,40 @@ function UserTree({ isGlobalRender = false, userId, userMail }) {
 
   return (
     <div className="user-tree-page">
-      {/* Top Section - Wish Tree Visualization */}
       <div className="tree-visualization-section">
         <div className="tree-header">
-          <h1 className="tree-title">
-            🌸 {treeName || 'Apricot Blossom Wish Tree'} 🌸
-          </h1>
-          <p className="tree-subtitle">
-            Click on the decorations to read wishes!
-          </p>
+          <h1 className="tree-title">🌸 {treeData?.name || 'Apricot Blossom Wish Tree'} 🌸</h1>
+          <p className="tree-subtitle">Click on the decorations to read wishes!</p>
         </div>
-        
-        {/* Apricot Tree with Decorations */}
         <div className="tree-container">
-          <ApricotTreeDemo
-            currentTreeId={treeId}
-          />
+          <ApricotTreeDemo currentTreeId={treeData?.id} refreshTrigger={wishRefreshTrigger} />
         </div>
       </div>
 
-      {/* Main Content Grid */}
       <div className="form-render-page">
-        {/* Left side - Wish Form */}
         <div className="wish-form-container">
-          <WishForm 
-            currentTreeId={treeId} 
-            onSubmitSuccess={handleWishSubmitted} 
-          /> 
+          <WishForm currentTreeId={treeData?.id} onSubmitSuccess={handleWishSubmitted} /> 
         </div>
-
-        {/* Top right - Share Tree */}
-        {!isGlobalRender && (
-          <div className="share-tree-container">
-            <ShareTree 
-              currentTreeId={treeId}
-              slug={slug}
-            />
-          </div>
-        )}
-
-        {/* Bottom right - Wish Render */}
         <div className="wish-render-container">
           <WishRender 
-            currentTreeId={treeId} 
-            refreshTrigger={refreshKey} 
-            isGlobalRender={isGlobalRender}
-            treeName={treeName}
-            currentUserId={userId}
-            currentUserMail={userMail}
+            currentTreeId={treeData?.id} 
+            refreshTrigger={wishRefreshTrigger} 
+            treeName={treeData?.name}
+            currentUserId={user?.uid}
           />
         </div>
+        <button onClick={() => setIsShareModalOpen(true)} className="share-tree-button">
+          Share Tree
+        </button>
+        <ShareModal
+          isOpen={isShareModalOpen}
+          onClose={() => setIsShareModalOpen(false)}
+          treeData={treeData}
+          user={user}
+          onRegenerateInviteLink={handleRegenerateInviteLink}
+          isRegenerating={isRegenerating}
+          cooldown={cooldown}
+        />
       </div>
     </div>
   );

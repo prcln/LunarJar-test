@@ -7,7 +7,7 @@ import WishForm from '../../components/wish-form/wish-form.jsx';
 import WishRender from '../../components/wish-render/wish-render.jsx';
 import ShareTree from '../../components/share-tree/share-tree.jsx';
 import './UserTree.css'; // Add the CSS file
-import { fetchTreeBySlug } from '../../utils/fetchTreeBySlug.js';
+import { fetchTreeBy } from '../../utils/fetchTreeBySlug.js';
 
 function PublicTree({ isGlobalRender = false, userId, userMail }) {
   const slug = import.meta.env.VITE_COMMUNITY_TREE_ID;
@@ -31,7 +31,7 @@ function PublicTree({ isGlobalRender = false, userId, userMail }) {
     const loadTree = async () => {
       try {
         setLoading(true);
-        const tree = await fetchTreeBySlug(slug, userId);
+        const tree = await fetchTreeBy(slug, userId);
         setTreeId(tree.id);
         setTreeName(tree.name);
         setError(null);
