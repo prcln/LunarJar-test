@@ -1,0 +1,58 @@
+/* =========================================
+   Site Footer Styles
+   ========================================= */
+
+.site-footer {
+  /* Using the dark text color for a strong, grounding background */
+  background-color: var(--text-dark);
+  color: var(--background-cream); /* A soft, warm text color for contrast */
+  padding: 2rem 1rem;
+  border-top: 4px solid var(--primary-gold); /* A prosperous gold accent line */
+  width: 100%;
+  box-sizing: border-box; /* Ensures padding is included in the width */
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* Allows items to stack on smaller screens */
+  gap: 1rem;
+}
+
+.footer-content p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem; /* Space between the links */
+}
+
+.footer-links a {
+  color: var(--accent-peach); /* Soft peach color for links */
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+}
+
+.footer-links a:hover {
+  color: var(--primary-gold); /* Links turn gold on hover */
+  text-decoration: underline;
+}
+
+/* =========================================
+   Responsive Design for Smaller Screens
+   ========================================= */
+
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column; /* Stack items vertically */
+    text-align: center;
+    gap: 1.5rem; /* Increase gap for vertical layout */
+  }
+}

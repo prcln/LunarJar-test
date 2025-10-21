@@ -24,6 +24,7 @@ import PublicTree from '../pages/PublicTree/PublicTree.jsx'
 import Privacy from '../pages/Privacy/Privacy.jsx';
 import Terms from '../pages/Terms/terms.jsx';
 import ShortLinkRedirectPage from '../components/Redirect.jsx';
+import Footer from '../components/footer/Footer.jsx';
 
 
 //       <Route path="/" element={<>      <WishForm/> <WishRender/> </>} />
@@ -166,7 +167,7 @@ function App() {
         />
 
         <Route 
-          path="/t/:shortId" 
+          path="/c/:shortId" 
           element={
             <ProtectedRoute>
               <ShortLinkRedirectPage/>
@@ -206,7 +207,8 @@ function App() {
           } 
         />
       </Routes>
-    </main>
+      </main>
+      {location.pathname !== '/login' && <Footer />}
     </div>
   );
 }

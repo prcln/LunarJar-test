@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import './ShareModal.css';
 import {
   CopyIcon, CheckIcon, DownloadIcon, SpinnerIcon, SCTwitterIcon, SCFacebookIcon,
-  SCLinkedInIcon, SCWhatsAppIcon, SCTelegramIcon
+  SCLinkedInIcon, SCWhatsAppIcon, SCTelegramIcon, PaperAirplaneIcon,
+  SpinnerIconNoSpin
 } from '../../utils/Icons'; // Make sure this import path is correct
-
+import { shareToSocialMedia } from '../../utils/shareSocial';
 
 // A new, separate component for the large QR Code modal
 const QrCodeModal = ({ isOpen, onClose, qrCodeUrl }) => {
@@ -14,7 +15,7 @@ const QrCodeModal = ({ isOpen, onClose, qrCodeUrl }) => {
     <div className="qr-modal-overlay" onClick={onClose}>
       <div className="qr-modal-content" onClick={(e) => e.stopPropagation()}>
         <img src={qrCodeUrl} alt="Enlarged QR Code" className="large-qr-image" />
-        <p className="qr-modal-text">Scan this code to open the Wish Tree</p>
+        <p className="qr-modal-text">🌟 Scan this code to open the Wish Tree 🌟</p>
       </div>
     </div>
   );
@@ -33,7 +34,7 @@ export default function ShareModal({ isOpen, onClose, treeData, user, onRegenera
 
   const getPrivateInvite = () => {
     if (!treeData?.slug && !treeData?.inviteToken) return '';
-    return `${window.location.origin}/t/${treeData.inviteToken}`;
+    return `${window.location.origin}/c/${treeData.inviteToken}`;
   };
 
   useEffect(() => {
@@ -55,19 +56,6 @@ export default function ShareModal({ isOpen, onClose, treeData, user, onRegenera
     }
   };
 
-  const shareToSocialMedia = (platform) => {
-    const url = getPublicInvite();
-    const text = `Check out my Wish Tree! 🌳✨`;
-    const shareUrls = {
-      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-      whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`,
-      telegram: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`
-    };
-    window.open(shareUrls[platform], '_blank', 'width=600,height=400');
-  };
-
   const downloadQRCode = () => {
     const link = document.createElement('a');
     link.href = qrCode;
@@ -78,6 +66,7 @@ export default function ShareModal({ isOpen, onClose, treeData, user, onRegenera
   };
 
   const socialPlatforms = [
+    { name: 'modernshare', icon: <PaperAirplaneIcon />, className: 'modernshare' },
     { name: 'twitter', icon: <SCTwitterIcon />, className: 'twitter' },
     { name: 'facebook', icon: <SCFacebookIcon />, className: 'facebook' },
     { name: 'linkedin', icon: <SCLinkedInIcon />, className: 'linkedin' },
@@ -127,29 +116,20 @@ export default function ShareModal({ isOpen, onClose, treeData, user, onRegenera
                 <label className="section-label">Collaborator Invite Link</label>
                 <div className="link-container">
                   <input type="text" value={getPrivateInvite()} readOnly className="link-input" />
-                  <button onClick={() => copyToClipboard(getPrivateInvite(), 'invite')} className="copy-btn invite">
-                    {copied === 'invite' ? <CheckIcon /> : <CopyIcon />}
-                  </button>
-                  <div className="regenerate-container">
-          {isRegenerating ? (
-            <SpinnerIcon />
-          ) : (
-            <button 
-              onClick={onRegenerateInviteLink} 
-              className="regen-btn"
-              disabled={cooldown > 0} // Disable button during cooldown
-            >
-              {cooldown > 0 
-                ? `(${cooldown}s)` 
-                : 'o'
-              }
-            </button>
-          )}
-        </div>
+                    <button onClick={() => copyToClipboard(getPrivateInvite(), 'invite')} className="copy-btn">
+                      {copied === 'invite' ? <CheckIcon /> : <CopyIcon />}
+                    </button>
+                    <button 
+                      onClick={onRegenerateInviteLink} 
+                      className="regen-btn"
+                      disabled={cooldown > 0 || isRegenerating} // Disable button during cooldown
+                    >
+                      {cooldown > 0 
+                        ? `${cooldown}` 
+                        : (isRegenerating ? <SpinnerIcon /> : <SpinnerIconNoSpin />)}
+                    </button>   
                 </div>
-                
-              </div>
-            )}
+              </div>)}
 
             {/* QR Code & Social Media */}
             <div className="qr-social-container">
@@ -161,9 +141,13 @@ export default function ShareModal({ isOpen, onClose, treeData, user, onRegenera
                   </button>
                 </div>
               )}
+
+              {/* Add this separator element */}
+                {qrCode && <div className="separator"></div>}
+
               <div className="social-grid-compact">
                 {socialPlatforms.map((platform) => (
-                  <button key={platform.name} onClick={() => shareToSocialMedia(platform.name)} title={platform.name.charAt(0).toUpperCase() + platform.name.slice(1)} className={`social-btn-compact ${platform.className}`}>
+                  <button key={platform.name} onClick={() => shareToSocialMedia(platform.name, treeData.name, treeData.slug)} title={platform.name.charAt(0).toUpperCase() + platform.name.slice(1)} className={`social-btn-compact ${platform.className}`}>
                     {platform.icon}
                   </button>
                 ))}

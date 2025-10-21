@@ -14,7 +14,7 @@
 .modal-content {
   position: relative;
   width: 100%;
-  max-width: 600px;
+  max-width: 560px;
   background: white;
   border-radius: 12px;
   padding: 24px;
@@ -66,6 +66,14 @@
 .link-container {
   display: flex;
   gap: 8px;
+}
+
+/* Add a container for the button/spinner for consistent alignment */
+.regenerate-container {
+  margin-top: 8px;
+  min-height: 20px; /* Prevents layout shift when spinner appears */
+  display: flex;
+  justify-content: flex-start; /* Aligns content to the left */
 }
 
 /* Link Input */
@@ -141,25 +149,32 @@
 .qr-social-container {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   background: #f8f9fa;
   padding: 16px;
   border-radius: 10px;
   border: 1px solid #e5e7eb;
 }
 
+/* The style for the separator itself */
+.separator {
+  width: 2px; /* The thickness of the line */
+  height: 28px; /* Adjust the height to match your buttons */
+  background-color: #cccccc; /* A light grey is standard for separators */
+}
+
 /* QR Compact */
 .qr-compact {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 /* QR Image Small */
 .qr-image-small {
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   border-radius: 6px;
   border: 2px solid #e5e7eb;
   padding: 4px;
@@ -200,8 +215,8 @@
 
 /* Social Button Compact */
 .social-btn-compact {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   padding: 0;
   border: none;
   border-radius: 50%;
@@ -263,6 +278,14 @@
   background: #0077b3;
 }
 
+.social-btn-compact.modernshare {
+  background: #02a0df;
+}
+
+.social-btn-compact.modernshare:hover {
+  background: #02a3e2;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .modal-content {
@@ -295,6 +318,10 @@
     width: 100%;
   }
 
+  .regen-btn {
+    width: 100%;
+  }
+
   .social-grid-compact {
     gap: 8px;
   }
@@ -314,11 +341,27 @@
   margin-bottom: 6px;
 }
 
-.copy-btn.invite {
-  background-color: #2dd4bf; /* Teal color */
+.regen-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  background: #2dd4bf;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 42px;
 }
-.copy-btn.invite:hover {
-  background-color: #14b8a6;
+
+.regen-btn:hover {
+  background: #30dfc7;
+  transform: translateY(-1px);
+}
+
+.regen-btn:active {
+  transform: translateY(0);
 }
 
 .regenerate-link-btn {
@@ -364,8 +407,8 @@
 }
 
 .large-qr-image {
-  width: 300px;
-  height: 300px;
+  width: 500px;
+  height: 500px;
   max-width: 80vw;
   max-height: 80vw;
   border-radius: 0.5rem;
@@ -392,10 +435,3 @@
   color: #4f46e5; /* You can adjust the color */
 }
 
-/* Add a container for the button/spinner for consistent alignment */
-.regenerate-container {
-  margin-top: 8px;
-  min-height: 20px; /* Prevents layout shift when spinner appears */
-  display: flex;
-  justify-content: flex-start; /* Aligns content to the left */
-}
