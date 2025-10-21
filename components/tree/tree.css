@@ -1,0 +1,382 @@
+/* Main Container */
+.wish-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #312e81 0%, #581c87 50%, #9d174d 100%);
+  padding: 2rem;
+}
+
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.title-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: #fcd34d;
+}
+
+.subtitle {
+  color: #e9d5ff;
+  font-size: 1.125rem;
+}
+
+/* Stats Panel */
+.stats-panel {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2.25rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: #e9d5ff;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.progress-bar {
+  margin-top: 0.5rem;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  height: 0.5rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: linear-gradient(to right, #4ade80, #10b981);
+  height: 0.5rem;
+  border-radius: 9999px;
+  transition: width 0.5s ease;
+}
+
+/* Festiveness Indicator */
+.festiveness-indicator {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.festiveness-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  padding: 0.5rem 1rem;
+}
+
+.festiveness-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 9999px;
+}
+
+.festiveness-high {
+  background: #4ade80;
+  animation: pulse 2s infinite;
+}
+
+.festiveness-medium {
+  background: #facc15;
+}
+
+.festiveness-low {
+  background: #fb923c;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.festiveness-text {
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Decoration Container */
+.decoration-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 1.5rem;
+  place-items: center;
+}
+
+@media (max-width: 768px) {
+  .slots-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Slots */
+.slot-wrapper {
+  position: relative;
+}
+
+.filled-slot {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filled-slot:hover {
+  transform: translateY(-4px);
+}
+
+/* Wish Balls */
+.wish-ball {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.ball-red { background: #ef4444; }
+.ball-blue { background: #3b82f6; }
+.ball-gold { background: #ffd700; }
+.ball-green { background: #22c55e; }
+.ball-purple { background: #a855f7; }
+
+.ball-shine {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+/* Decoration Icons */
+.decoration-icon {
+  width: 2rem;
+  height: 2rem;
+  filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.04));
+  transition: all 0.3s ease;
+}
+
+.star-icon {
+  color: #facc15;
+  fill: #facc15;
+}
+
+.gift-icon {
+  color: #ec4899;
+}
+
+.sparkle-icon {
+  color: #22d3ee;
+  fill: #22d3ee;
+}
+
+.decoration-hover {
+  transform: scale(1.25);
+}
+
+/* Empty Slots */
+.empty-slot {
+  cursor: pointer;
+  position: relative;
+}
+
+.empty-circle {
+  width: 2rem;
+  height: 2rem;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.empty-hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.1);
+}
+
+/* Tooltips */
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1f2937;
+  color: white;
+  font-size: 0.75rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  white-space: nowrap;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  animation: tooltipIn 0.2s ease-out;
+}
+
+@keyframes tooltipIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.tooltip-title {
+  font-weight: 600;
+}
+
+.tooltip-content {
+  color: #d1d5db;
+  margin-top: 0.25rem;
+  max-width: 20rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tooltip-subtitle {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.tooltip-arrow {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-0.25rem);
+  border: 0.25rem solid transparent;
+  border-top-color: #1f2937;
+}
+
+/* Footer */
+.footer-info {
+  margin-top: 2rem;
+  text-align: center;
+  color: #e9d5ff;
+  font-size: 0.875rem;
+}
+
+.footer-subtitle {
+  margin-top: 0.5rem;
+}
+
+/* Demo Controls */
+.demo-controls {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  padding: 1rem;
+  border: 2px solid #e9d5ff;
+}
+
+.controls-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.75rem;
+}
+
+.controls-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.control-btn {
+  padding: 0.25rem 0.75rem;
+  color: white;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.control-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-minus {
+  background: #ef4444;
+}
+
+.btn-minus:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+.btn-plus {
+  background: #22c55e;
+}
+
+.btn-plus:hover:not(:disabled) {
+  background: #16a34a;
+}
+
+.control-count {
+  color: #374151;
+  font-weight: 500;
+  width: 3rem;
+  text-align: center;
+}
+
+.controls-hint {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+}

@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+/* Main page container with grid layout */
+.user-tree-page {
+  min-height: 100vh;
+}
+
+.tree-visualization-section {
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.form-render-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 20px;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px); /* Adjust based on navbar height */
+}
+
+/* Wish Form - Takes full height on left side */
+.wish-form-container {
+  grid-column: 1;
+  grid-row: 1 / 3; /* Span both rows */
+  align-self: start;
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+/* Share Container - Top right */
+.share-container {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: start;
+}
+
+/* Wish Render - Bottom right */
+.wishes-container {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: start;
+}
+
+/* Responsive layout for tablets */
+@media (max-width: 1024px) {
+  .form-render-page {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 20px;
+  }
+
+  .wish-form-container {
+    grid-column: 1;
+    grid-row: 1;
+    position: relative;
+    top: 0;
+    max-height: none;
+  }
+
+  .share-container {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .wishes-container {
+    grid-column: 1;
+    grid-row: 3;
+  }
+}
+
+/* Mobile layout */
+@media (max-width: 768px) {
+  .form-render-page {
+    padding: 16px;
+    gap: 16px;
+  }
+}
+
+/* Alternative: 2-column layout with form taking full left */
+.form-render-page.layout-v2 {
+  grid-template-columns: minmax(400px, 500px) 1fr;
+  grid-template-rows: auto 1fr;
+}
+
+/* Alternative: 3-column layout for wider screens */
+@media (min-width: 1600px) {
+  .form-render-page.layout-wide {
+    grid-template-columns: 400px 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 24px;
+  }
+
+  .form-render-page.layout-wide .wish-form-container {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .form-render-page.layout-wide .share-container {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .form-render-page.layout-wide .wishes-container {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+
+.tree-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(255, 182, 193, 0.1) 0%, rgba(255, 215, 0, 0.1) 100%);
+  border-radius: 16px;
+  border: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.tree-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #8B0000;
+  margin: 0 0 0.5rem 0;
+  text-shadow: 2px 2px 4px rgba(255, 215, 0, 0.3);
+  font-family: 'Georgia', serif;
+  letter-spacing: 0.5px;
+}
+
+.tree-subtitle {
+  font-size: 1.1rem;
+  color: #B22222;
+  margin: 0;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tree-header {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tree-title {
+    font-size: 1.8rem;
+  }
+
+  .tree-subtitle {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tree-title {
+    font-size: 1.5rem;
+  }
+
+  .tree-subtitle {
+    font-size: 0.85rem;
+  }
+}

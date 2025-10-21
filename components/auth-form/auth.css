@@ -1,0 +1,32 @@
+.forgot-password-link {
+  text-align: right;
+  margin-top: 8px;
+}
+
+.forgot-password-link .toggle-link {
+  font-size: 0.9rem;
+  color: #667eea;
+}
+
+.forgot-description {
+  color: #666;
+  font-size: 0.95rem;
+  margin-bottom: 24px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.btn-facebook {
+  background-color: #1877f2;
+  color: white;
+  margin-bottom: 12px;
+}
+
+.btn-facebook:hover {
+  background-color: #166fe5;
+}
+
+.btn-facebook:disabled {
+  background-color: #4a90e2;
+  cursor: not-allowed;
+}
