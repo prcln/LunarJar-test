@@ -5,7 +5,7 @@ import { db } from '../../firebase.js';
 
 import WishForm from '../../components/wish-form/wish-form.jsx';
 import WishRender from '../../components/wish-render/wish-render.jsx';
-import ShareTree from '../../components/share-tree/share-tree.jsx';
+import ShareModal from '../../components/share-modal/ShareModal.jsx';
 import './UserTree.css'; // Add the CSS file
 import { fetchTreeBy } from '../../utils/fetchTreeBySlug.js';
 

@@ -1,0 +1,437 @@
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 16px;
+}
+
+/* Modal Content */
+.modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Close Button */
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px;
+  color: #999;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+/* Modal Body */
+.modal-body {
+  padding: 0;
+}
+
+/* Title */
+.share-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Share Section */
+.share-section {
+  margin-bottom: 16px;
+}
+
+/* Link Container */
+.link-container {
+  display: flex;
+  gap: 8px;
+}
+
+/* Add a container for the button/spinner for consistent alignment */
+.regenerate-container {
+  margin-top: 8px;
+  min-height: 20px; /* Prevents layout shift when spinner appears */
+  display: flex;
+  justify-content: flex-start; /* Aligns content to the left */
+}
+
+/* Link Input */
+.link-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #f8f9fa;
+  color: #333;
+  font-family: inherit;
+}
+
+.link-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* Copy Button */
+.copy-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 42px;
+}
+
+.copy-btn:hover {
+  background: #5568d3;
+  transform: translateY(-1px);
+}
+
+.copy-btn:active {
+  transform: translateY(0);
+}
+
+.regen-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  background: #ebf5a4;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 42px;
+}
+
+.regen-btn:hover {
+  background: #5568d3;
+  transform: translateY(-1px);
+}
+
+.regen-btn:active {
+  transform: translateY(0);
+}
+
+/* Compact Section */
+.compact-section {
+  margin-top: 16px;
+}
+
+/* QR Social Container */
+.qr-social-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+/* The style for the separator itself */
+.separator {
+  width: 2px; /* The thickness of the line */
+  height: 28px; /* Adjust the height to match your buttons */
+  background-color: #cccccc; /* A light grey is standard for separators */
+}
+
+/* QR Compact */
+.qr-compact {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+/* QR Image Small */
+.qr-image-small {
+  width: 90px;
+  height: 90px;
+  border-radius: 6px;
+  border: 2px solid #e5e7eb;
+  padding: 4px;
+  background: white;
+}
+
+/* Download Button Compact */
+.download-btn-compact {
+  padding: 6px 10px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+}
+
+.download-btn-compact:hover {
+  background: #5568d3;
+  transform: translateY(-1px);
+}
+
+.download-btn-compact:active {
+  transform: translateY(0);
+}
+
+/* Social Grid Compact */
+.social-grid-compact {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+/* Social Button Compact */
+.social-btn-compact {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.social-btn-compact:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.social-btn-compact:active {
+  transform: translateY(0);
+}
+
+/* Social Platform Colors */
+.social-btn-compact.twitter {
+  background: #1DA1F2;
+}
+
+.social-btn-compact.twitter:hover {
+  background: #1a8cd8;
+}
+
+.social-btn-compact.facebook {
+  background: #1877F2;
+}
+
+.social-btn-compact.facebook:hover {
+  background: #1565d8;
+}
+
+.social-btn-compact.linkedin {
+  background: #0A66C2;
+}
+
+.social-btn-compact.linkedin:hover {
+  background: #0954a5;
+}
+
+.social-btn-compact.whatsapp {
+  background: #25D366;
+}
+
+.social-btn-compact.whatsapp:hover {
+  background: #20bd5a;
+}
+
+.social-btn-compact.telegram {
+  background: #0088cc;
+}
+
+.social-btn-compact.telegram:hover {
+  background: #0077b3;
+}
+
+.social-btn-compact.modernshare {
+  background: #02a0df;
+}
+
+.social-btn-compact.modernshare:hover {
+  background: #02a3e2;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 90%;
+    padding: 20px;
+  }
+
+  .share-title {
+    font-size: 1.25rem;
+  }
+
+  .qr-social-container {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .social-grid-compact {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .link-container {
+    flex-direction: column;
+  }
+
+  .copy-btn {
+    width: 100%;
+  }
+
+  .regen-btn {
+    width: 100%;
+  }
+
+  .social-grid-compact {
+    gap: 8px;
+  }
+
+  .social-btn-compact {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* --- NEW STYLES TO ADD --- */
+.section-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4a5568;
+  margin-bottom: 6px;
+}
+
+.regen-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  background: #2dd4bf;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 42px;
+}
+
+.regen-btn:hover {
+  background: #30dfc7;
+  transform: translateY(-1px);
+}
+
+.regen-btn:active {
+  transform: translateY(0);
+}
+
+.regenerate-link-btn {
+  font-size: 0.8rem;
+  color: #4f46e5;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 8px;
+  padding: 0;
+  text-align: left;
+}
+
+.qr-image-small {
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+.qr-image-small:hover {
+  transform: scale(1.05);
+}
+
+/* --- QR Code Modal Styles --- */
+.qr-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001; /* Must be higher than the main modal */
+}
+
+.qr-modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.large-qr-image {
+  width: 500px;
+  height: 500px;
+  max-width: 80vw;
+  max-height: 80vw;
+  border-radius: 0.5rem;
+}
+
+.qr-modal-text {
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+/* Add these styles to your existing CSS file */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  color: #4f46e5; /* You can adjust the color */
+}
+

@@ -12,7 +12,7 @@ import UserTree from '../pages/UserTree/UserTree.jsx';
 import AuthComponent from '../components/auth-form/AuthComponent.jsx';
 import ProtectedRoute from '../components/ProtectedRoute.jsx';
 import Navbar from '../components/navbar/Navbar.jsx';
-import ShareTree from '../components/share-tree/share-tree.jsx';
+import ShareModal from '../components/share-modal/ShareModal.jsx';
 import CreateTree from '../components/create-tree/create-tree.jsx';
 import TreeList from '../components/tree-list/tree-list.jsx';
 import Tree from '../components/tree/tree.jsx';

@@ -5,7 +5,7 @@ import {
   SCLinkedInIcon, SCWhatsAppIcon, SCTelegramIcon, PaperAirplaneIcon,
   SpinnerIconNoSpin
 } from '../../utils/Icons'; // Make sure this import path is correct
-import { shareToSocialMedia } from '../../utils/shareSocial';
+import { shareToSocialMedia } from '../../utils/services/shareSocial';
 
 // A new, separate component for the large QR Code modal
 const QrCodeModal = ({ isOpen, onClose, qrCodeUrl }) => {

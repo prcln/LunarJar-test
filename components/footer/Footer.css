@@ -4,8 +4,8 @@
 
 .site-footer {
   /* Using the dark text color for a strong, grounding background */
-  background-color: var(--text-dark);
-  color: var(--background-cream); /* A soft, warm text color for contrast */
+  background-color: var(--background-cream);
+  color: var(--text-dark); /* A soft, warm text color for contrast */
   padding: 2rem 1rem;
   border-top: 4px solid var(--primary-gold); /* A prosperous gold accent line */
   width: 100%;

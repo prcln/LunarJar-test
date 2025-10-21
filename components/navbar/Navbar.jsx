@@ -35,7 +35,7 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="nav-container">
         <Link to="/" className="nav-logo">
-          🌳 Wish Tree
+          Wish Tree
         </Link>
 
         {/* Desktop Menu */}
@@ -46,7 +46,7 @@ export default function Navbar() {
           <Link to="/create" className={`nav-link ${isActive('/create')}`}>
             Create Tree
           </Link>
-          <Link to="/community/tree" className={`nav-link ${isActive('/')}`}>
+          <Link to="/community/tree" className={`nav-link ${isActive('/community')}`}>
             Community Tree
           </Link>
           <Link to="/public/trees" className={`nav-link ${isActive('/public/trees')}`}>
