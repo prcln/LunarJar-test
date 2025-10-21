@@ -4,7 +4,7 @@ import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 import UserDashboard from './UserDashboard';
 import ForgotPasswordForm from './ForgotPasswordForm';
-import '../../styles/public/auth.css';
+import './auth.css';
 
 export default function AuthComponent() {
   const [view, setView] = useState('login'); // 'login', 'signup', 'forgot', 'dashboard'

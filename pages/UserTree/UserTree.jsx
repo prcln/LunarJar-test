@@ -8,7 +8,7 @@ import { nanoid } from 'nanoid';
 import { db, auth } from '../../firebase.js';
 import WishForm from '../../components/wish-form/wish-form.jsx';
 import WishRender from '../../components/wish-render/wish-render.jsx';
-import ShareModal from '../../components/share-tree/share-tree.jsx';
+import ShareModal from '../../components/share-modal/ShareModal.jsx';
 import ErrorDisplay from '../../components/errordisplay/errordisplay.jsx';
 import ApricotTreeDemo from '../../components/tree/realtree.jsx';
 import './UserTree.css';

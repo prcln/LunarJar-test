@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { GoogleIcon } from '../../utils/icon/GoogleIcon.jsx';
-import { FacebookIcon } from '../../utils/icon/FacebookIcon.jsx';
+import { GoogleIcon, FacebookIcon } from '../../utils/Icons';
 
 export default function LoginForm({ 
   onLogin, 
