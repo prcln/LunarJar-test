@@ -5,14 +5,16 @@ import { auth, db } from '../../firebase.js';
 
 import './create-tree.css'
 import { createUniqueSlug } from '../../utils/slugGen.js';
+import { useNavigate } from 'react-router-dom';
 
 export default function CreateTree() {
-const [user, setUser] = useState(null);
-const [treeName, setTreeName] = useState('');
-const [isPublic, setIsPublic] = useState(true);
-const [collaborators, setCollaborators] = useState('');
-const [isLoading, setIsLoading] = useState(false);
-const [message, setMessage] = useState({ type: '', text: '' });
+  const [user, setUser] = useState(null);
+  const [treeName, setTreeName] = useState('');
+  const [isPublic, setIsPublic] = useState(true);
+  const [collaborators, setCollaborators] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+  const navigate = useNavigate();
 
 useEffect(() => {
   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -44,10 +46,12 @@ const handleSubmit = async (e) => {
       .split(',')
       .map(email => email.trim())
       .filter(email => email.length > 0);
-
+    
+    const slug = createUniqueSlug(treeName.trim());
+    
     const treeData = {
       name: treeName.trim(),
-      slug: createUniqueSlug(treeName.trim()),
+      slug: slug,
       ownerId: user.uid,
       isPublic: isPublic,
       collaborators: collaboratorsList,
@@ -55,6 +59,7 @@ const handleSubmit = async (e) => {
       wishCount: 0
     };
 
+    // Simply adding new document, does not return anything
     const docRef = await addDoc(collection(db, 'trees'), treeData);
     
     setMessage({ type: 'success', text: 'Tree created successfully!' });
@@ -66,7 +71,7 @@ const handleSubmit = async (e) => {
     
     // Redirect after 2 seconds
     setTimeout(() => {
-      window.location.href = `/me/tree/${docRef.slug}`;
+      navigate(`/me/tree/${slug}`);
     }, 2000);
 
   } catch (error) {

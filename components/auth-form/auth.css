@@ -105,7 +105,8 @@ label {
 }
 
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+input[type="inviteCode"] {
     width: 100%;
     padding: 15px 20px;
     border: 2px solid #e1e5e9;
@@ -117,7 +118,8 @@ input[type="password"] {
 }
 
 input[type="email"]:focus,
-input[type="password"]:focus {
+input[type="password"]:focus,
+input[type="inviteCode"]:focus {
     outline: none;
     border-color: #667eea;
     background: #fff;

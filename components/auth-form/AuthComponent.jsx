@@ -5,9 +5,10 @@ import SignupForm from './SignupForm';
 import UserDashboard from './UserDashboard';
 import ForgotPasswordForm from './ForgotPasswordForm';
 import './auth.css';
+import InviteCodeForm from './InviteCode';
 
 export default function AuthComponent() {
-  const [view, setView] = useState('login'); // 'login', 'signup', 'forgot', 'dashboard'
+  const [view, setView] = useState('login'); // 'login', 'signup', 'forgot', 'dashboard', 'invitecode'
   const {
     user,
     loading,
@@ -28,6 +29,8 @@ export default function AuthComponent() {
       setView('dashboard');
     } else if (view === 'dashboard') {
       setView('login');
+    } else if (view === 'invitecode') {
+      setView('invitecode')
     }
   }, [user, view]);
 
@@ -43,6 +46,7 @@ export default function AuthComponent() {
         onGoogleSignIn={handleGoogleSignIn}
         onFacebookSignIn={handleFacebookSignIn}
         onSwitchToSignup={() => setView('signup')}
+        onSwitchToInviteCode={() => setView('invitecode')}
         onSwitchToForgotPassword={() => setView('forgot')}
         loading={loading}
         error={error}
@@ -72,6 +76,20 @@ export default function AuthComponent() {
         loading={loading}
         error={error}
         success={success}
+      />
+    );
+  }
+
+  if (view === 'invitecode') {
+    return (
+      <InviteCodeForm
+        onLogin={handleEmailLogin}
+        onGoogleSignIn={handleGoogleSignIn}
+        onFacebookSignIn={handleFacebookSignIn}
+        onSwitchToLogin={() => setView('login')}
+        onSwitchToForgotPassword={() => setView('forgot')}
+        loading={loading}
+        error={error}
       />
     );
   }

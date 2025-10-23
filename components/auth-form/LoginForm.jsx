@@ -1,17 +1,21 @@
 import { useState } from 'react';
 import { GoogleIcon, FacebookIcon } from '../../utils/Icons';
+import { validateInviteCode } from '../../alpha-testing/validate-code';
 
 export default function LoginForm({ 
   onLogin, 
   onGoogleSignIn, 
   onFacebookSignIn,
   onSwitchToSignup,
+  onSwitchToInviteCode,
   onSwitchToForgotPassword, 
   loading, 
   error 
 }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -84,7 +88,15 @@ export default function LoginForm({
         </form>
         
         <div className="toggle-text">
-          Don't have an account? <span className="toggle-link" onClick={onSwitchToSignup}>Sign up here</span>
+          Don't have an account? 
+          {
+          import.meta.env.VITE_ALPHASTAGE !== 'true' && (
+            <span className="toggle-link" onClick={onSwitchToSignup}>
+              Sign up here
+            </span>
+          )
+          }
+          <span className="toggle-link" onClick={onSwitchToInviteCode}>Use invite code</span>
         </div>
       </div>
     </div>
