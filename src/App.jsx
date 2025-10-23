@@ -25,6 +25,7 @@ import Privacy from '../pages/Privacy/Privacy.jsx';
 import Terms from '../pages/Terms/terms.jsx';
 import ShortLinkRedirectPage from '../components/Redirect.jsx';
 import Footer from '../components/footer/Footer.jsx';
+import { AdminPanel } from '../components/admin-panel/AdminPanel.jsx';
 
 
 //       <Route path="/" element={<>      <WishForm/> <WishRender/> </>} />
@@ -171,6 +172,15 @@ function App() {
           element={
             <ProtectedRoute>
               <ShortLinkRedirectPage/>
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/panel" 
+          element={
+            <ProtectedRoute>
+              <AdminPanel/>
             </ProtectedRoute>
           } 
         />
