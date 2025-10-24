@@ -70,9 +70,15 @@ body {
   transition: all 0.3s ease;
 }
 
-.action-button:hover {
+.action-button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+}
+
+.action-button:disabled {
+  background: linear-gradient(45deg, #ccc, #999);
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 /* Wish render section */
