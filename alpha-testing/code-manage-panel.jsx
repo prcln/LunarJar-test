@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs, query, orderBy, serverTimestamp, addDoc } from 'firebase/firestore';
 import { db } from '../firebase.js';
-import { Search, Filter, Plus, RefreshCw } from 'lucide-react';
+import { Search, Filter, Plus, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
 import './code-manage-panel.css';
 
 // --- Helper Components ---
