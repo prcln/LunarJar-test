@@ -45,12 +45,16 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
             <Route path="/" element={<PublicTree key="public" isGlobalRender={true} />} />
-            <Route path="/create" element={<CreateTree />} />
-            <Route path="/me/tree" element={<TreeList key="mytree" />} />
+            <Route key="create" path="/create" element={<CreateTree />} />
+            <Route path="/me/trees" element={<TreeList key="mytree" />} />
             <Route path="/me/tree/:slug" element={<UserTree key="personalMe" isGlobalRender={false} />} />
+            <Route path="/tree/:slug" element={<UserTree key="personalOther" isGlobalRender={false} />} />
             <Route path="/user/tree/:tree" element={<UserTree key="personalOther" isGlobalRender={false} />} />
             <Route path="/public/trees" element={<TreeList key="publictree" isPublic={true} />} />
             <Route path="/panel" element={<AdminPanel />} />
+            <Route path="/pos" element={<DecorationPositionFinder />} />
+            <Route path="/c/:shortId" element={<ShortLinkRedirectPage />} />
+            <Route key="community" path="/community" element={<PublicTree key="communitytree"         isPublic={true} />} />
             {/* ... add all other protected routes here ... */}
           </Route>
         </Route>

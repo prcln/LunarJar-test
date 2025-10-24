@@ -9,7 +9,7 @@ import './UserTree.css'; // Add the CSS file
 import { fetchTreeBy } from '../../utils/fetchTreeBySlug.js';
 import { useUserAuth } from '../../context/AuthContext.jsx';
 
-function PublicTree({ isGlobalRender = false}) {
+function PublicTree({ isGlobalRender = true}) {
   const { user } = useUserAuth();
   const slug = import.meta.env.VITE_COMMUNITY_TREE_ID;
   const [treeId, setTreeId] = useState(null);
@@ -18,7 +18,7 @@ function PublicTree({ isGlobalRender = false}) {
   const [error, setError] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  console.log(user.uid);
+
   
   const handleWishSubmitted = () => {
     console.log('🔄 Refreshing wishes...');

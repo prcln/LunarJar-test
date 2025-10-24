@@ -1,120 +1,27 @@
 @import "tailwindcss";
 
-/* Main page container with grid layout */
-.user-tree-page {
-  min-height: 100vh;
+/* Remove default body margins */
+body {
+  margin: 0;
+  padding: 0;
 }
 
+/* Main page container */
+.user-tree-page {
+  min-height: 100vh;
+  padding: 20px;
+  width: 100%;
+}
+
+/* Tree visualization section */
 .tree-visualization-section {
   width: 100%;
   margin-bottom: 40px;
 }
 
-.form-render-page {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 1fr;
-  gap: 20px;
-  padding: 20px;
-  max-width: 1400px;
-  margin: 0 auto;
-  min-height: calc(100vh - 80px); /* Adjust based on navbar height */
-}
-
-/* Wish Form - Takes full height on left side */
-.wish-form-container {
-  grid-column: 1;
-  grid-row: 1 / 3; /* Span both rows */
-  align-self: start;
-  position: sticky;
-  top: 20px;
-  max-height: calc(100vh - 100px);
-  overflow-y: auto;
-}
-
-/* Share Container - Top right */
-.share-container {
-  grid-column: 2;
-  grid-row: 1;
-  align-self: start;
-}
-
-/* Wish Render - Bottom right */
-.wishes-container {
-  grid-column: 2;
-  grid-row: 2;
-  align-self: start;
-}
-
-/* Responsive layout for tablets */
-@media (max-width: 1024px) {
-  .form-render-page {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-    gap: 20px;
-  }
-
-  .wish-form-container {
-    grid-column: 1;
-    grid-row: 1;
-    position: relative;
-    top: 0;
-    max-height: none;
-  }
-
-  .share-container {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .wishes-container {
-    grid-column: 1;
-    grid-row: 3;
-  }
-}
-
-/* Mobile layout */
-@media (max-width: 768px) {
-  .form-render-page {
-    padding: 16px;
-    gap: 16px;
-  }
-}
-
-/* Alternative: 2-column layout with form taking full left */
-.form-render-page.layout-v2 {
-  grid-template-columns: minmax(400px, 500px) 1fr;
-  grid-template-rows: auto 1fr;
-}
-
-/* Alternative: 3-column layout for wider screens */
-@media (min-width: 1600px) {
-  .form-render-page.layout-wide {
-    grid-template-columns: 400px 1fr 1fr;
-    grid-template-rows: 1fr;
-    gap: 24px;
-  }
-
-  .form-render-page.layout-wide .wish-form-container {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .form-render-page.layout-wide .share-container {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .form-render-page.layout-wide .wishes-container {
-    grid-column: 3;
-    grid-row: 1;
-  }
-}
-
 .tree-header {
   text-align: center;
   margin-bottom: 1.5rem;
-  margin-top: 1rem;
   padding: 1.5rem;
   background: linear-gradient(135deg, rgba(255, 182, 193, 0.1) 0%, rgba(255, 215, 0, 0.1) 100%);
   border-radius: 16px;
@@ -139,11 +46,71 @@
   opacity: 0.9;
 }
 
-/* Responsive adjustments */
+/* Action buttons container */
+.options-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 40px;
+  width: 100%;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.action-button {
+  flex: 1;
+  padding: 14px;
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+}
+
+/* Wish render section */
+.wish-render-container {
+  width: 100%;
+}
+
+/* Loading state */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.loading-content {
+  text-align: center;
+}
+
+.loading-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.loading-text {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
+  .user-tree-page {
+    padding: 16px;
+  }
+
   .tree-header {
     padding: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
   }
 
   .tree-title {
@@ -152,6 +119,11 @@
 
   .tree-subtitle {
     font-size: 0.95rem;
+  }
+
+  .options-container {
+    flex-direction: column;
+    margin-bottom: 24px;
   }
 }
 
@@ -162,5 +134,9 @@
 
   .tree-subtitle {
     font-size: 0.85rem;
+  }
+
+  .action-button {
+    font-size: 1rem;
   }
 }

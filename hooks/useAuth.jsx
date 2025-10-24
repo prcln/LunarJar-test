@@ -137,7 +137,7 @@ export const useAuth = () => {
                 displayName: user.displayName,
                 photoURL: user.photoURL
               };
-              sessionStorage.setItem('pendingUserData', JSON.stringify(tempUserData));
+        sessionStorage.setItem('pendingUserData', JSON.stringify(tempUserData));
 
         // 2. Redirect them to the invite validation page.
         navigate('/validate-invite');

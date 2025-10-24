@@ -4,8 +4,10 @@ import { collection, addDoc, getDocs, query, where, orderBy } from 'firebase/fir
 import { useNavigate } from 'react-router-dom';
 
 import '../wish-render/wish-render.css';
+import { useUserAuth } from '../../context/AuthContext.jsx';
 
-const TreeList = ({ userId, isPublic=false }) => {
+const TreeList = ({ isPublic=false }) => {
+
   const navigate = useNavigate();
   const [trees, setTrees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,6 +15,9 @@ const TreeList = ({ userId, isPublic=false }) => {
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [displayedTrees, setDisplayedTrees] = useState([]);
+
+  const { user } = useUserAuth();
+  const userId = user.uid;
 
   useEffect(() => {
     if (!userId) {
@@ -38,7 +43,7 @@ const TreeList = ({ userId, isPublic=false }) => {
     setLoading(true);
     setError(null);
     try {
-      console.log('Loading trees from Firebase...');
+
 
       let q;
       
@@ -85,12 +90,10 @@ const TreeList = ({ userId, isPublic=false }) => {
   };
 
   const handleTreeClick = (tree) => {
-    console.log('Selected tree:', tree);
     navigate(`/me/tree/${tree}`);
   };
 
   const handleCreateTree = () => {
-    console.log('Create new tree');
     // Navigate to create tree page
     navigate('/create');
   };

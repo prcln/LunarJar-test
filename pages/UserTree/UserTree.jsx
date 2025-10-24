@@ -1,16 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, onSnapshot, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
 import { nanoid } from 'nanoid';
 
 // Project Imports
-import { db, auth } from '../../firebase.js';
-import WishForm from '../../components/wish-form/wish-form.jsx';
+import { db } from '../../firebase.js';
 import WishRender from '../../components/wish-render/wish-render.jsx';
 import ShareModal from '../../components/share-modal/ShareModal.jsx';
 import ErrorDisplay from '../../components/errordisplay/errordisplay.jsx';
 import ApricotTreeDemo from '../../components/tree/realtree.jsx';
+import WishFormModal from '../../components/wish-form-modal/wish-form-modal.jsx';
+import { useUserAuth } from '../../context/AuthContext.jsx';
 import './UserTree.css';
 
 /**
@@ -21,33 +21,26 @@ function UserTree() {
   const { slug } = useParams();
 
   // --- State Management ---
-  const [user, setUser] = useState(null);
   const [treeData, setTreeData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [wishRefreshTrigger, setWishRefreshTrigger] = useState(0);
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [cooldown, setCooldown] = useState(0);
 
+  const { user } = useUserAuth();
 
   // --- Hooks ---
-
-  // Effect for handling user authentication state
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, setUser);
-    return () => unsubscribe();
-  }, []);
-
+  // Invite Link Regen Timer
   useEffect(() => {
     if (cooldown <= 0) return;
 
-    // Set up an interval to decrease the cooldown every second
     const timer = setInterval(() => {
       setCooldown((prev) => prev - 1);
     }, 1000);
 
-    // Clean up the interval when the component unmounts or cooldown reaches 0
     return () => clearInterval(timer);
   }, [cooldown]);
 
@@ -60,11 +53,10 @@ function UserTree() {
     }
 
     setLoading(true);
-    let unsubscribe = () => {}; // Initialize an empty unsubscribe function
+    let unsubscribe = () => {};
 
     const setupListener = async () => {
       try {
-        // First, find the tree's document ID using its slug
         const treesRef = collection(db, 'trees');
         const q = query(treesRef, where('slug', '==', slug));
         const querySnapshot = await getDocs(q);
@@ -76,7 +68,6 @@ function UserTree() {
         const treeDoc = querySnapshot.docs[0];
         const treeDocRef = doc(db, 'trees', treeDoc.id);
 
-        // Now, set up the real-time listener on that document
         unsubscribe = onSnapshot(treeDocRef, (docSnap) => {
           if (docSnap.exists()) {
             setTreeData({ id: docSnap.id, ...docSnap.data() });
@@ -99,12 +90,10 @@ function UserTree() {
 
     setupListener();
 
-    // Cleanup: unsubscribe from the listener when the component unmounts or the slug changes
     return () => unsubscribe();
   }, [slug]);
 
   // --- Event Handlers ---
-
   const handleWishSubmitted = () => {
     setWishRefreshTrigger(prev => prev + 1);
   };
@@ -118,20 +107,15 @@ function UserTree() {
       const newToken = nanoid(10);
       const treeDocRef = doc(db, 'trees', treeData.id);
       await updateDoc(treeDocRef, { inviteToken: newToken });
-
-      // Start a 30-second cooldown after success
       setCooldown(30);
-
     } catch (err) {
       console.error("Error regenerating link:", err);
-      // Optionally show an error to the user
     } finally {
       setIsRegenerating(false);
     }
   }, [treeData?.id, isRegenerating, cooldown]);
 
   // --- Render Logic ---
-
   if (loading) {
     return (
       <div className="loading-container">
@@ -155,6 +139,7 @@ function UserTree() {
 
   return (
     <div className="user-tree-page">
+      {/* Tree Visualization */}
       <div className="tree-visualization-section">
         <div className="tree-header">
           <h1 className="tree-title">🌸 {treeData?.name || 'Apricot Blossom Wish Tree'} 🌸</h1>
@@ -165,31 +150,42 @@ function UserTree() {
         </div>
       </div>
 
-      <div className="form-render-page">
-        <div className="wish-form-container">
-          <WishForm currentTreeId={treeData?.id} onSubmitSuccess={handleWishSubmitted} /> 
-        </div>
-        <div className="wish-render-container">
-          <WishRender 
-            currentTreeId={treeData?.id} 
-            refreshTrigger={wishRefreshTrigger} 
-            treeName={treeData?.name}
-            currentUserId={user?.uid}
-          />
-        </div>
-        <button onClick={() => setIsShareModalOpen(true)} className="share-tree-button">
+      {/* Action Buttons */}
+      <div className="options-container">
+        <button onClick={() => setIsShareModalOpen(true)} className="action-button">
           Share Tree
         </button>
-        <ShareModal
-          isOpen={isShareModalOpen}
-          onClose={() => setIsShareModalOpen(false)}
-          treeData={treeData}
-          user={user}
-          onRegenerateInviteLink={handleRegenerateInviteLink}
-          isRegenerating={isRegenerating}
-          cooldown={cooldown}
+        <button onClick={() => setIsFormModalOpen(true)} className="action-button">
+          Send a Wish
+        </button>
+      </div>
+
+      {/* Wish Render */}
+      <div className="wish-render-container">
+        <WishRender 
+          currentTreeId={treeData?.id} 
+          refreshTrigger={wishRefreshTrigger} 
+          treeName={treeData?.name}
+          currentUserId={user?.uid}
         />
       </div>
+
+      {/* Modals */}
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        treeData={treeData}
+        user={user}
+        onRegenerateInviteLink={handleRegenerateInviteLink}
+        isRegenerating={isRegenerating}
+        cooldown={cooldown}
+      />
+      <WishFormModal
+        currentTreeId={treeData.id}
+        isOpen={isFormModalOpen}
+        onClose={() => setIsFormModalOpen(false)}
+        onSubmitSuccess={handleWishSubmitted}
+      />
     </div>
   );
 }

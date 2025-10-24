@@ -40,13 +40,13 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="desktop-menu">
-          <Link to="/me/tree" className={`nav-link ${isActive('/me/tree')}`}>
+          <Link to="/me/trees" className={`nav-link ${isActive('/me/trees')}`}>
             My Tree
           </Link>
           <Link to="/create" className={`nav-link ${isActive('/create')}`}>
             Create Tree
           </Link>
-          <Link to="/community/tree" className={`nav-link ${isActive('/community')}`}>
+          <Link to="/community" className={`nav-link ${isActive('/community')}`}>
             Community Tree
           </Link>
           <Link to="/public/trees" className={`nav-link ${isActive('/public/trees')}`}>
@@ -95,7 +95,7 @@ export default function Navbar() {
       {/* Mobile Menu Dropdown */}
       <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
         <Link 
-          to="/me/tree" 
+          to="/me/trees" 
           className={`mobile-link ${isActive('/')}`}
           onClick={() => setMenuOpen(false)}
         >
@@ -109,7 +109,7 @@ export default function Navbar() {
           Create Tree
         </Link>
         <Link 
-          to="/community/tree" 
+          to="/community" 
           className={`mobile-link ${isActive('/render')}`}
           onClick={() => setMenuOpen(false)}
         >
