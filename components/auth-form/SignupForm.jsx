@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { GoogleIcon, FacebookIcon } from '../../utils/Icons';
+import PasswordInput from './PasswordInput/PasswordInput';
 
 export default function SignupForm({ 
   onSignup, 
@@ -77,10 +78,11 @@ export default function SignupForm({
           </div>
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirm Password</label>
-            <input 
+            <PasswordInput
               type="password" 
               id="confirmPassword"
               value={confirmPassword}
+              placeholder="Password"
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               minLength={6}

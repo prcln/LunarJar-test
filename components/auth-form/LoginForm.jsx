@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { GoogleIcon, FacebookIcon } from '../../utils/Icons';
 import { validateInviteCode } from '../../alpha-testing/validate-code';
+import PasswordInput from './PasswordInput/PasswordInput';
 
 export default function LoginForm({ 
   onLogin, 
@@ -25,8 +26,8 @@ export default function LoginForm({
   return (
     <div className="auth-container">
       <div className="auth-form active">
-        <h2>Welcome Back</h2>
-        
+        <h2> {import.meta.env.VITE_ALPHASTAGE !== 'true' ? 'Welcome Back' : 'Welcome to Alpha Testing'} </h2>
+        { import.meta.env.VITE_ALPHASTAGE !== 'true' && (<div>
         <button 
           type="button" 
           className="btn btn-google"
@@ -50,12 +51,12 @@ export default function LoginForm({
         <div className="divider">
           <span>or</span>
         </div>
-
+      </div>)}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="loginEmail">Email Address</label>
             <input 
-              type="email" 
+              type="text" 
               id="loginEmail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -64,10 +65,11 @@ export default function LoginForm({
           </div>
           <div className="form-group">
             <label htmlFor="loginPassword">Password</label>
-            <input 
+            <PasswordInput 
               type="password" 
               id="loginPassword"
               value={password}
+              placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
               required
             />
@@ -96,7 +98,7 @@ export default function LoginForm({
             </span>
           )
           }
-          <span className="toggle-link" onClick={onSwitchToInviteCode}>Use invite code</span>
+          <span className="toggle-link" onClick={onSwitchToInviteCode}>Sign up with invite code</span>
         </div>
       </div>
     </div>

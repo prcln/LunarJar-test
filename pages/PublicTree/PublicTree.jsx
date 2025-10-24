@@ -1,22 +1,25 @@
 import { useState, useEffect } from 'react';
 
-import { collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
-import { db } from '../../firebase.js';
 
 import WishForm from '../../components/wish-form/wish-form.jsx';
 import WishRender from '../../components/wish-render/wish-render.jsx';
 import ShareModal from '../../components/share-modal/ShareModal.jsx';
+
 import './UserTree.css'; // Add the CSS file
 import { fetchTreeBy } from '../../utils/fetchTreeBySlug.js';
+import { useUserAuth } from '../../context/AuthContext.jsx';
 
-function PublicTree({ isGlobalRender = false, userId, userMail }) {
+function PublicTree({ isGlobalRender = false}) {
+  const { user } = useUserAuth();
   const slug = import.meta.env.VITE_COMMUNITY_TREE_ID;
   const [treeId, setTreeId] = useState(null);
   const [treeName, setTreeName] = useState(null);
   const [loading, setLoading] = useState(!isGlobalRender);
   const [error, setError] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
-  console.log(slug);
+
+  console.log(user.uid);
+  
   const handleWishSubmitted = () => {
     console.log('🔄 Refreshing wishes...');
     setRefreshKey(prev => prev + 1);
@@ -31,7 +34,7 @@ function PublicTree({ isGlobalRender = false, userId, userMail }) {
     const loadTree = async () => {
       try {
         setLoading(true);
-        const tree = await fetchTreeBy(slug, userId);
+        const tree = await fetchTreeBy(slug, user.uid);
         setTreeId(tree.id);
         setTreeName(tree.name);
         setError(null);
@@ -43,7 +46,7 @@ function PublicTree({ isGlobalRender = false, userId, userMail }) {
     };
 
     loadTree();
-  }, [slug, userId, isGlobalRender]);
+  }, [slug, user.uid, isGlobalRender]);
 
   if (loading) {
     return (
@@ -88,8 +91,7 @@ function PublicTree({ isGlobalRender = false, userId, userMail }) {
         refreshTrigger={refreshKey} 
         isGlobalRender={isGlobalRender}
         treeName={treeName}
-        currentUserId={userId}
-        currentUserMail={userMail}
+        currentUserId={user.uid}
       />
     </div>
   );

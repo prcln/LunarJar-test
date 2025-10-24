@@ -1,37 +1,17 @@
-import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
-import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
-import { auth } from '../firebase.js';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useUserAuth } from '../context/AuthContext'; // 1. Import the hook
 
-export default function ProtectedRoute({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+export default function ProtectedRoute() {
+  // 2. Get user and loading state from the central context
+  const { user, loading } = useUserAuth();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
+  // Show a loading indicator while the context is checking the user's status
   if (loading) {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh' 
-      }}>
-        Loading...
-      </div>
-    );
+    return <div>Loading...</div>;
   }
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
+  // 3. If there is a user, render the nested child routes via <Outlet />.
+  //    If not, redirect them to the login page.
+  console.log(user);
+  return user ? <Outlet /> : <Navigate to="/login" replace />;
 }

@@ -19,7 +19,7 @@ async function generateInviteCode(code, maxUses = 1) {
 }
 
 // Generate some codes
-async function createMultipleCodes() {
+export async function createMultipleCodes() {
   const codes = [
     'ALPHA2024',
     'EARLYBIRD',

@@ -8,7 +8,8 @@ import {
   sendEmailVerification,
   sendPasswordResetEmail,
   GoogleAuthProvider,
-  FacebookAuthProvider
+  FacebookAuthProvider,
+  getAdditionalUserInfo,
 } from 'firebase/auth';
 import { auth } from '../firebase.js';
 
@@ -24,6 +25,26 @@ export const useAuth = () => {
     });
     return () => unsubscribe();
   }, []);
+
+  const markCodeAsUsed = async (userId) => {
+    await updateDoc(codeRef, {
+      used: true,
+      usedBy: userId,
+      usedAt: serverTimestamp(),
+      usedCount: (codeData.usedCount || 0) + 1
+    });
+  };
+
+  const createUserDocument = async (user, authProvider) => {
+    await setDoc(doc(db, 'users', user.uid), {
+      email: user.email,
+      displayName: user.displayName || null,
+      photoURL: user.photoURL || null,
+      inviteCode: inviteCode,
+      createdAt: serverTimestamp(),
+      role: 'alpha-tester',
+    });
+  };
 
   const getErrorMessage = (errorCode) => {
     const errorMessages = {
@@ -66,16 +87,25 @@ export const useAuth = () => {
       setError('Passwords do not match.');
       return false;
     }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long.');
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long.');
       return false;
     }
     
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
       await sendEmailVerification(userCredential.user);
+
       setSuccess('Account created successfully! Please check your email to verify your account.');
+
+      await markCodeAsUsed(user.uid);
+      await createUserDocument(user, 'email');
+
+      console.log('User created successfully');
+
       return true;
     } catch (err) {
       setError(getErrorMessage(err.code));
@@ -88,11 +118,36 @@ export const useAuth = () => {
   const handleGoogleSignIn = async () => {
     setError('');
     setLoading(true);
+    const providerName = 'Google';
+
     const provider = new GoogleAuthProvider();
     
     try {
-      await signInWithPopup(auth, provider);
-      setSuccess('Successfully signed in with Google!');
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      const additionalInfo = getAdditionalUserInfo(result);
+      
+      if (additionalInfo?.isNewUser) {
+        alert('Error: Your email is not registered for an invite. Account creation failed.');
+
+        const tempUserData = {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL
+              };
+              sessionStorage.setItem('pendingUserData', JSON.stringify(tempUserData));
+
+        // 2. Redirect them to the invite validation page.
+        navigate('/validate-invite');
+
+        return; // Stop the function here.
+      } else {
+        // It's an existing user, they can proceed normally.
+        navigate('/'); // Or to their dashboard
+      }
+    
       return true;
     } catch (err) {
       setError(getErrorMessage(err.code));
@@ -105,10 +160,9 @@ export const useAuth = () => {
   const handleFacebookSignIn = async () => {
     setError('');
     setLoading(true);
+    const providerName = 'Facebook';
+
     const provider = new FacebookAuthProvider();
-    
-    // Option 1: Request only public_profile (no email)
-    // provider.addScope('public_profile');
     
     // Option 2: Request email + public_profile (recommended - default)
     provider.addScope('email');
@@ -120,9 +174,21 @@ export const useAuth = () => {
     });
     
     try {
-      await signInWithPopup(auth, provider);
-      setSuccess('Successfully signed in with Facebook!');
-      return true;
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      // Check if user already exists
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      
+      if (!userDoc.exists()) {
+        // New user
+        await markCodeAsUsed(user.uid);
+        await createUserDocument(user, providerName);
+        console.log('New user created via', providerName);
+      } else {
+        console.log('Existing user logged in');
+      }
+        return true;
+
     } catch (err) {
       setError(getErrorMessage(err.code));
       return false;

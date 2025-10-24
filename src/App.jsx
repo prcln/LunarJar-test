@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useParams } from "react-router-dom";
+import { AuthProvider, useUserAuth } from "../context/AuthContext"; // Assuming you have this
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase.js';
 import './App.css'
+
 
 // named export {}
 // default export no {}
@@ -26,200 +28,41 @@ import Terms from '../pages/Terms/terms.jsx';
 import ShortLinkRedirectPage from '../components/Redirect.jsx';
 import Footer from '../components/footer/Footer.jsx';
 import { AdminPanel } from '../components/admin-panel/AdminPanel.jsx';
+import MainLayout from '../components/MainLayout/MainLayout.jsx';
 
-
-//       <Route path="/" element={<>      <WishForm/> <WishRender/> </>} />
 
 function App() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const { tree: treeId } = useParams();
-  
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
+  // All state logic (useState, useEffect) is now in AuthProvider!
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {location.pathname !== '/login' && <Navbar />}
-      <main style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <AuthProvider>
       <Routes>
-        {/* Redirect to home if already logged in */}
-        <Route 
-          path="/login" 
-          element={user ? <Navigate to="/" replace /> : <AuthComponent />} 
-        />
+        {/* === Public Routes (No Navbar/Footer) === */}
+        <Route path="/login" element={<AuthComponent />} />
+
+        {/* === Protected Routes (With Navbar/Footer) === */}
+        {/* The ProtectedRoute checks if the user is logged in. */}
+        {/* The MainLayout provides the Navbar, Footer, and main content area. */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<PublicTree key="public" isGlobalRender={true} />} />
+            <Route path="/create" element={<CreateTree />} />
+            <Route path="/me/tree" element={<TreeList key="mytree" />} />
+            <Route path="/me/tree/:slug" element={<UserTree key="personalMe" isGlobalRender={false} />} />
+            <Route path="/user/tree/:tree" element={<UserTree key="personalOther" isGlobalRender={false} />} />
+            <Route path="/public/trees" element={<TreeList key="publictree" isPublic={true} />} />
+            <Route path="/panel" element={<AdminPanel />} />
+            {/* ... add all other protected routes here ... */}
+          </Route>
+        </Route>
         
-        <Route
-          path="/terms"
-          element={<Terms />}      
-        />
+        {/* === Public Static Routes (With Navbar/Footer but no protection) === */}
+        <Route element={<MainLayout />}>
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
+        </Route>
 
-        <Route
-          path="/privacy"
-          element={<Privacy />}      
-        />
-
-        {/* Protected routes - require authentication */}
-        <Route 
-          path="/" 
-          element={
-            <ProtectedRoute>
-              <PublicTree 
-              key="public" 
-              isGlobalRender={true} />
-            </ProtectedRoute>
-          } 
-        />
-
-        <Route 
-          path="/tree" 
-          element={
-            <ProtectedRoute>
-              <Tree 
-              wishCount={20} 
-              daysUntilNewYear={15} 
-              />
-            </ProtectedRoute>
-          } 
-        />
-
-          <Route 
-          path="/create" 
-          element={
-            <ProtectedRoute>
-              <CreateTree />
-            </ProtectedRoute>
-          } 
-        />
-        
-        <Route 
-          path="/user/tree/:tree" 
-          element={
-            <ProtectedRoute>
-              <UserTree 
-              isGlobalRender={false}
-              userMail={user?.email}
-              />
-            </ProtectedRoute>
-          } 
-        />
-        
-        <Route 
-          path="/public/trees" 
-          element={
-            <ProtectedRoute>
-              <TreeList
-              key="publictree" 
-              isPublic={true}
-              userId={user?.uid}
-              />
-            </ProtectedRoute>
-          } 
-        />
-
-        <Route 
-          path="/community/tree" 
-          element={
-            <ProtectedRoute>
-              <PublicTree
-              key="communitytree" 
-              isPublic={true}
-              userId={user?.uid}
-              />
-            </ProtectedRoute>
-          } 
-        />
-        
-        <Route 
-          path="/me/tree" 
-          element={
-            <ProtectedRoute>
-              <TreeList 
-                key="mytree"
-                userId={user?.uid}
-                />
-            </ProtectedRoute>
-          } 
-        />
-
-        <Route 
-          path="/me/tree/:slug" 
-          element={
-            <ProtectedRoute>
-              <UserTree
-              key="personalMe" 
-              isGlobalRender={false} 
-              userId={user?.uid}
-              userMail={user?.email}
-              />
-            </ProtectedRoute>
-          } 
-        />
-
-        <Route 
-          path="/c/:shortId" 
-          element={
-            <ProtectedRoute>
-              <ShortLinkRedirectPage/>
-            </ProtectedRoute>
-          } 
-        />
-
-        <Route 
-          path="/panel" 
-          element={
-            <ProtectedRoute>
-              <AdminPanel/>
-            </ProtectedRoute>
-          } 
-        />
-
-        <Route 
-          path="/tree/:slug" 
-          element={
-            <ProtectedRoute>
-              <UserTree
-              key="personalOther" 
-              isGlobalRender={false} 
-              userId={user?.uid} />
-            </ProtectedRoute>
-          } 
-        />
-
-        <Route 
-          path="/test" 
-          element={
-            <ProtectedRoute>
-              <ApricotTreeDemo/>
-            </ProtectedRoute>
-
-          } 
-        />
-
-        <Route 
-          path="/pos" 
-          element={
-            <ProtectedRoute>
-              <DecorationPositionFinder/>
-            </ProtectedRoute>
-            
-          } 
-        />
       </Routes>
-      </main>
-      {location.pathname !== '/login' && <Footer />}
-    </div>
+    </AuthProvider>
   );
 }
 

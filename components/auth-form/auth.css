@@ -104,7 +104,7 @@ label {
     font-size: 14px;
 }
 
-input[type="email"],
+input[type="text"],
 input[type="password"],
 input[type="inviteCode"] {
     width: 100%;
@@ -117,7 +117,7 @@ input[type="inviteCode"] {
     color: #333;
 }
 
-input[type="email"]:focus,
+input[type="text"]:focus,
 input[type="password"]:focus,
 input[type="inviteCode"]:focus {
     outline: none;

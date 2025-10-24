@@ -5,10 +5,14 @@ import SignupForm from './SignupForm';
 import UserDashboard from './UserDashboard';
 import ForgotPasswordForm from './ForgotPasswordForm';
 import './auth.css';
-import InviteCodeForm from './InviteCode';
+import InviteCodeForm from './InviteCodeForm';
 
 export default function AuthComponent() {
   const [view, setView] = useState('login'); // 'login', 'signup', 'forgot', 'dashboard', 'invitecode'
+  const [validatedCode, setValidatedCode] = useState(null);
+  const [codeRef, setCodeRef] = useState(null);
+  const [codeData, setCodeData] = useState(null);
+
   const {
     user,
     loading,
@@ -29,10 +33,15 @@ export default function AuthComponent() {
       setView('dashboard');
     } else if (view === 'dashboard') {
       setView('login');
-    } else if (view === 'invitecode') {
-      setView('invitecode')
     }
   }, [user, view]);
+
+  const handleInviteCodeValidated = (code, ref, data) => {
+    setValidatedCode(code);
+    setCodeRef(ref);
+    setCodeData(data);
+    setView('signin'); 
+  };
 
   // Clear messages when view changes
   useEffect(() => {
@@ -83,11 +92,8 @@ export default function AuthComponent() {
   if (view === 'invitecode') {
     return (
       <InviteCodeForm
-        onLogin={handleEmailLogin}
-        onGoogleSignIn={handleGoogleSignIn}
-        onFacebookSignIn={handleFacebookSignIn}
+        onValidated={handleInviteCodeValidated}
         onSwitchToLogin={() => setView('login')}
-        onSwitchToForgotPassword={() => setView('forgot')}
         loading={loading}
         error={error}
       />
