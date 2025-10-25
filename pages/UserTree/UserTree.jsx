@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { doc, onSnapshot, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { nanoid } from 'nanoid';
 
@@ -11,6 +11,8 @@ import ErrorDisplay from '../../components/errordisplay/errordisplay.jsx';
 import ApricotTreeDemo from '../../components/tree/realtree.jsx';
 import WishFormModal from '../../components/wish-form-modal/wish-form-modal.jsx';
 import { useUserAuth } from '../../context/AuthContext.jsx';
+import { usePermissions, PERMISSIONS } from '../../utils/userRoles.js';
+import { useProtectedRoute } from '../../hooks/useProtectedRoute.jsx';
 import './UserTree.css';
 
 /**
@@ -19,6 +21,9 @@ import './UserTree.css';
  */
 function UserTree() {
   const { slug } = useParams();
+  const [searchParams] = useSearchParams();
+  const inviteToken = searchParams.get('invite');
+  const { redirectToLogin } = useProtectedRoute();
 
   // --- State Management ---
   const [treeData, setTreeData] = useState(null);
@@ -29,8 +34,10 @@ function UserTree() {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const [accessDenied, setAccessDenied] = useState(false);
 
   const { user } = useUserAuth();
+  const permissions = usePermissions(user, treeData);
 
   // --- Hooks ---
   // Invite Link Regen Timer
@@ -43,6 +50,34 @@ function UserTree() {
 
     return () => clearInterval(timer);
   }, [cooldown]);
+
+  // Check access permissions after tree data is loaded
+  useEffect(() => {
+    if (!treeData || loading) return;
+
+    // Debug logging
+    console.log('Access Check:', {
+      treeId: treeData.id,
+      isPublic: treeData.isPublic,
+      ownerId: treeData.ownerId,
+      userId: user?.uid,
+      isOwner: treeData.ownerId === user?.uid,
+      inviteToken: inviteToken,
+      treeInviteToken: treeData.inviteToken,
+      role: permissions.role
+    });
+
+    // Check if user has access to this tree
+    const hasAccess = permissions.canAccessTree(inviteToken);
+    
+    console.log('Has Access:', hasAccess);
+    
+    if (!hasAccess) {
+      setAccessDenied(true);
+    } else {
+      setAccessDenied(false);
+    }
+  }, [treeData, user, inviteToken, permissions, loading]);
 
   // Effect for fetching and listening to tree data in real-time
   useEffect(() => {
@@ -70,12 +105,14 @@ function UserTree() {
 
         unsubscribe = onSnapshot(treeDocRef, (docSnap) => {
           if (docSnap.exists()) {
-            setTreeData({ id: docSnap.id, ...docSnap.data() });
+            const data = { id: docSnap.id, ...docSnap.data() };
+            setTreeData(data);
             setError(null);
+            setAccessDenied(false);
+            setLoading(false);
           } else {
             throw new Error("This Wish Tree no longer exists.");
           }
-          setLoading(false);
         }, (err) => {
             console.error("Error with Firestore listener:", err);
             setError("Could not connect to the Wish Tree data.");
@@ -98,8 +135,23 @@ function UserTree() {
     setWishRefreshTrigger(prev => prev + 1);
   };
 
+  const handleSendWishClick = () => {
+    if (!user) {
+      // Redirect to login with current page URL
+      redirectToLogin();
+      return;
+    }
+    setIsFormModalOpen(true);
+  };
+
   const handleRegenerateInviteLink = useCallback(async () => {
     if (isRegenerating || cooldown > 0 || !treeData?.id) return;
+    
+    // Check permission
+    if (!permissions.can(PERMISSIONS.REGENERATE_INVITE_LINK)) {
+      alert("You don't have permission to regenerate the invite link.");
+      return;
+    }
     
     setIsRegenerating(true);
     
@@ -113,7 +165,7 @@ function UserTree() {
     } finally {
       setIsRegenerating(false);
     }
-  }, [treeData?.id, isRegenerating, cooldown]);
+  }, [treeData?.id, isRegenerating, cooldown, permissions]);
 
   // --- Render Logic ---
   if (loading) {
@@ -137,6 +189,16 @@ function UserTree() {
     );
   }
 
+  if (accessDenied) {
+    return (
+      <ErrorDisplay 
+        message="This is a private tree. You need to sign in or have an invite link to view it."
+        title="Access Denied"
+        onRefresh={redirectToLogin}
+      />
+    );
+  }
+
   return (
     <div className="user-tree-page">
       {/* Tree Visualization */}
@@ -152,11 +214,18 @@ function UserTree() {
 
       {/* Action Buttons */}
       <div className="options-container">
-        <button onClick={() => setIsShareModalOpen(true)} className="action-button">
-          Share Tree
-        </button>
-        <button onClick={() => setIsFormModalOpen(true)} className="action-button">
-          Send a Wish
+        {permissions.can(PERMISSIONS.SHARE_TREE) && (
+          <button onClick={() => setIsShareModalOpen(true)} className="action-button">
+            Share Tree
+          </button>
+        )}
+        <button 
+          onClick={handleSendWishClick} 
+          className="action-button"
+          disabled={!permissions.can(PERMISSIONS.CREATE_WISH)}
+          title={!permissions.can(PERMISSIONS.CREATE_WISH) ? 'Sign in to send wishes' : ''}
+        >
+          {user ? 'Send a Wish' : 'Sign in to Send Wish'}
         </button>
       </div>
 
@@ -171,21 +240,25 @@ function UserTree() {
       </div>
 
       {/* Modals */}
-      <ShareModal
-        isOpen={isShareModalOpen}
-        onClose={() => setIsShareModalOpen(false)}
-        treeData={treeData}
-        user={user}
-        onRegenerateInviteLink={handleRegenerateInviteLink}
-        isRegenerating={isRegenerating}
-        cooldown={cooldown}
-      />
-      <WishFormModal
-        currentTreeId={treeData.id}
-        isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
-        onSubmitSuccess={handleWishSubmitted}
-      />
+      {permissions.can(PERMISSIONS.SHARE_TREE) && (
+        <ShareModal
+          isOpen={isShareModalOpen}
+          onClose={() => setIsShareModalOpen(false)}
+          treeData={treeData}
+          user={user}
+          onRegenerateInviteLink={handleRegenerateInviteLink}
+          isRegenerating={isRegenerating}
+          cooldown={cooldown}
+        />
+      )}
+      {permissions.can(PERMISSIONS.CREATE_WISH) && (
+        <WishFormModal
+          currentTreeId={treeData.id}
+          isOpen={isFormModalOpen}
+          onClose={() => setIsFormModalOpen(false)}
+          onSubmitSuccess={handleWishSubmitted}
+        />
+      )}
     </div>
   );
 }

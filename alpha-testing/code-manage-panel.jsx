@@ -3,8 +3,11 @@ import { collection, getDocs, query, orderBy, serverTimestamp, addDoc } from 'fi
 import { db } from '../firebase.js';
 import { Search, Filter, Plus, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
 import './code-manage-panel.css';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 // --- Helper Components ---
+
+
 
 function LoadingSpinner() {
   return (
@@ -24,6 +27,7 @@ function ErrorMessage({ message }) {
 }
 
 function CodeTableRow({ code }) {
+  const { t, language, setLanguage } = useLanguage();
   const usedAtDate = code.usedAt?.seconds 
     ? new Date(code.usedAt.seconds * 1000).toLocaleString() 
     : '-';
@@ -35,7 +39,7 @@ function CodeTableRow({ code }) {
       </td>
       <td>
         <span className={`status-badge ${code.used ? 'used' : 'available'}`}>
-          {code.used ? 'Used' : 'Available'}
+          {code.used ? t('codeStatusUsed') : t('codeStatusAvailable')}
         </span>
       </td>
       <td>{code.usedBy || '-'}</td>
@@ -47,7 +51,7 @@ function CodeTableRow({ code }) {
 function AddCodeModal({ isOpen, onClose, onAdd }) {
   const [numberOfCodes, setNumberOfCodes] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
-
+  const { t, language, setLanguage } = useLanguage();
   const generateCode = () => {
     return Math.random().toString(36).substring(2, 10).toUpperCase() + 
            Math.random().toString(36).substring(2, 6).toUpperCase();
@@ -85,10 +89,10 @@ function AddCodeModal({ isOpen, onClose, onAdd }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <h3 className="modal-title">Generate New Invite Codes</h3>
+        <h3 className="modal-title">{t('modalTitle')}</h3>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="numberOfCodes">Number of codes to generate:</label>
+            <label htmlFor="numberOfCodes">{t('numberCodes')}</label>
             <input
               id="numberOfCodes"
               type="number"
@@ -133,6 +137,8 @@ export function AdminInviteCodes() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { t, language, setLanguage } = useLanguage();
+  
   const ITEMS_PER_PAGE = 8;
 
   const loadCodes = async () => {
@@ -226,30 +232,30 @@ export function AdminInviteCodes() {
   return (
       <div className="admin-container">
         <div className="header">
-          <h2>Invite Codes Manager</h2>
+          <h2>{t('codePanelHeader')}</h2>
           <div className="header-actions">
             <button className="action-btn secondary" onClick={loadCodes}>
               <RefreshCw size={18} />
-              Refresh
+              {t('codePanelRefresh')}
             </button>
             <button className="action-btn" onClick={() => setIsModalOpen(true)}>
               <Plus size={18} />
-              Add Codes
+              {t('codePanelAdd')}
             </button>
           </div>
         </div>
 
         <div className="stats-bar">
           <div className="stat-card">
-            <div className="stat-label">Total Codes</div>
+            <div className="stat-label">{t('codePanelTotalCodes')}</div>
             <div className="stat-value">{stats.total}</div>
           </div>
           <div className="stat-card available">
-            <div className="stat-label">Available</div>
+            <div className="stat-label">{t('codeStatusAvailable')}</div>
             <div className="stat-value">{stats.available}</div>
           </div>
           <div className="stat-card used">
-            <div className="stat-label">Used</div>
+            <div className="stat-label">{t('codeStatusUsed')}</div>
             <div className="stat-value">{stats.used}</div>
           </div>
         </div>
@@ -260,7 +266,7 @@ export function AdminInviteCodes() {
             <input
               type="text"
               className="search-input"
-              placeholder="Search by code or user..."
+              placeholder={t('codePanelSearchTerm')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -292,7 +298,7 @@ export function AdminInviteCodes() {
         {filteredCodes.length === 0 ? (
           <div className="empty-state">
             <div className="empty-state-icon">📭</div>
-            <p>No invite codes found matching your criteria.</p>
+            <p>{t('codePanelNotFound')}</p>
           </div>
         ) : (
           <>
@@ -300,10 +306,10 @@ export function AdminInviteCodes() {
               <table className="table">
                 <thead>
                   <tr>
-                    <th>Code</th>
-                    <th>Status</th>
-                    <th>Used By</th>
-                    <th>Used At</th>
+                    <th>{t('codeTableCode')}</th>
+                    <th>{t('codeTableStatus')}</th>
+                    <th>{t('codeTableUsedBy')}</th>
+                    <th>{t('codeTableUsedAt')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -322,7 +328,7 @@ export function AdminInviteCodes() {
                   disabled={currentPage === 1}
                 >
                   <ChevronLeft size={18} />
-                  Previous
+                  {t('codeTablePrev')}
                 </button>
                 
                 <div className="pagination-info">
@@ -337,7 +343,7 @@ export function AdminInviteCodes() {
                   onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
                 >
-                  Next
+                  {t('codeTableNext')}
                   <ChevronRight size={18} />
                 </button>
               </div>

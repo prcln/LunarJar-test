@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
@@ -12,6 +13,13 @@ export default function AuthComponent() {
   const [validatedCode, setValidatedCode] = useState(null);
   const [codeRef, setCodeRef] = useState(null);
   const [codeData, setCodeData] = useState(null);
+
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+
+  // Get redirect URL from query params or location state
+  const redirectUrl = searchParams.get('redirect') || location.state?.from || '/me/trees';
 
   const {
     user,
@@ -27,26 +35,41 @@ export default function AuthComponent() {
     clearMessages
   } = useAuth();
 
-  // Update view based on user state
+  // Update view and handle redirect when user logs in
   useEffect(() => {
     if (user) {
-      setView('dashboard');
+      // User is logged in
+      if (view !== 'dashboard') {
+        // Redirect to the intended page
+        navigate(redirectUrl, { replace: true });
+      }
     } else if (view === 'dashboard') {
+      // User logged out, switch back to login
       setView('login');
     }
-  }, [user, view]);
+  }, [user, view, navigate, redirectUrl]);
 
   const handleInviteCodeValidated = (code, ref, data) => {
     setValidatedCode(code);
     setCodeRef(ref);
     setCodeData(data);
-    setView('signin'); 
+    setView('signup'); // Switch to signup after invite code validation
   };
 
   // Clear messages when view changes
   useEffect(() => {
     clearMessages();
   }, [view, clearMessages]);
+
+  // Show loading state while checking auth
+  if (loading && !user && view === 'login') {
+    return (
+      <div className="auth-loading">
+        <div className="loading-spinner">🌳</div>
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   if (view === 'login') {
     return (
@@ -73,6 +96,9 @@ export default function AuthComponent() {
         loading={loading}
         error={error}
         success={success}
+        inviteCode={validatedCode}
+        codeRef={codeRef}
+        codeData={codeData}
       />
     );
   }

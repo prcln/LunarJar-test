@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
 import { auth } from '../../firebase.js';
 import './Navbar.css';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function Navbar() {
   const [user, setUser] = useState(null);
@@ -10,6 +11,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const { t, language, setLanguage } = useLanguage();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -41,16 +43,16 @@ export default function Navbar() {
         {/* Desktop Menu */}
         <div className="desktop-menu">
           <Link to="/me/trees" className={`nav-link ${isActive('/me/trees')}`}>
-            My Tree
+            {t('navMyTree')}
           </Link>
           <Link to="/create" className={`nav-link ${isActive('/create')}`}>
-            Create Tree
+            {t('navCreateTree')}
           </Link>
           <Link to="/community" className={`nav-link ${isActive('/community')}`}>
-            Community Tree
+            {t('navComTree')}
           </Link>
           <Link to="/public/trees" className={`nav-link ${isActive('/public/trees')}`}>
-            Public Trees
+            {t('navPubTree')}
           </Link>
         </div>
 
@@ -70,8 +72,9 @@ export default function Navbar() {
                   {user.displayName || user.email?.split('@')[0]}
                 </span>
               </div>
+              
               <button onClick={handleLogout} className="logout-btn">
-                Logout
+                {t('navLogOut')}
               </button>
             </>
           )}
@@ -99,28 +102,28 @@ export default function Navbar() {
           className={`mobile-link ${isActive('/')}`}
           onClick={() => setMenuOpen(false)}
         >
-          My Tree
+          {t('navMyTree')}
         </Link>
         <Link 
           to="/create" 
           className={`mobile-link ${isActive('/form')}`}
           onClick={() => setMenuOpen(false)}
         >
-          Create Tree
+          {t('navCreateTree')}
         </Link>
         <Link 
           to="/community" 
           className={`mobile-link ${isActive('/render')}`}
           onClick={() => setMenuOpen(false)}
         >
-          Community Tree
+          {t('navComTree')}
         </Link>
         <Link 
           to="/public/trees" 
           className={`mobile-link ${isActive('/me/tree')}`}
           onClick={() => setMenuOpen(false)}
         >
-          Public Trees
+          {t('navPubTree')}
         </Link>
         {user && (
           <button 
@@ -130,7 +133,7 @@ export default function Navbar() {
             }} 
             className="mobile-logout-btn"
           >
-            Logout
+            {t('navLogOut')}
           </button>
         )}
       </div>

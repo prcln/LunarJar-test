@@ -128,23 +128,28 @@ export const canPerformAction = (user, treeData, permission) => {
  * Check if user can access a tree
  */
 export const canAccessTree = (user, treeData, inviteToken = null) => {
+  // Safety check
+  if (!treeData) {
+    return false;
+  }
+
   // Public trees are accessible to everyone
-  if (treeData?.isPublic) {
+  if (treeData.isPublic === true) {
     return true;
   }
   
-  // Private trees with valid invite token
-  if (!treeData?.isPublic && inviteToken && treeData?.inviteToken === inviteToken) {
-    return true;
-  }
-  
-  // Tree owner can always access
-  if (user && treeData?.ownerId === user.uid) {
+  // Tree owner can always access their own tree
+  if (user && treeData.ownerId && treeData.ownerId === user.uid) {
     return true;
   }
   
   // Admins can always access
   if (user && isAdmin(user.uid)) {
+    return true;
+  }
+  
+  // Private trees with valid invite token
+  if (!treeData.isPublic && inviteToken && treeData.inviteToken === inviteToken) {
     return true;
   }
   
