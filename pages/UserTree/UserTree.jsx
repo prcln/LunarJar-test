@@ -14,6 +14,7 @@ import { useUserAuth } from '../../context/AuthContext.jsx';
 import { usePermissions, PERMISSIONS } from '../../utils/userRoles.js';
 import { useProtectedRoute } from '../../hooks/useProtectedRoute.jsx';
 import './UserTree.css';
+import CountdownTimer from '../../components/CountdownTimer/CountdownTimer.jsx';
 
 /**
  * Main component for displaying a user's wish tree page.
@@ -206,6 +207,9 @@ function UserTree() {
         <div className="tree-header">
           <h1 className="tree-title">🌸 {treeData?.name || 'Apricot Blossom Wish Tree'} 🌸</h1>
           <p className="tree-subtitle">Click on the decorations to read wishes!</p>
+        </div>
+        <div className="tree-header">
+          <CountdownTimer/>
         </div>
         <div className="tree-container">
           <ApricotTreeDemo currentTreeId={treeData?.id} refreshTrigger={wishRefreshTrigger} />

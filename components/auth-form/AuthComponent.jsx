@@ -126,5 +126,5 @@ export default function AuthComponent() {
     );
   }
 
-  return <UserDashboard user={user} onSignOut={handleSignOut} />;
+  return;
 }
